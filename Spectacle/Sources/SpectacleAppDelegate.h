@@ -27,6 +27,8 @@
 @property (nonatomic, strong) IBOutlet NSMenuItem *disableShortcutsForAnHourMenuItem;
 @property (nonatomic, strong) IBOutlet NSMenuItem *disableShortcutsForApplicationMenuItem;
 
+- (IBAction)checkForUpdates:(id)sender;
+
 - (IBAction)showPreferencesWindow:(id)sender;
 
 - (IBAction)moveFrontmostWindowToFullscreen:(id)sender;

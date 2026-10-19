@@ -1,204 +1,216 @@
 #import <Carbon/Carbon.h>
-#import <Expecta/Expecta.h>
-#import <Specta/Specta.h>
+#import <XCTest/XCTest.h>
 
 #import "SpectacleShortcut.h"
 #import "SpectacleShortcutTranslations.h"
 
 static SpectacleShortcut *shortcutForKeyBinding(NSString *keyBinding);
 
-SpecBegin(SpectacleShortcutTranslations)
-describe(@"SpectacleShortcutTranslations", ^{
-  it(@"should translate alphanumeric key codes", ^{
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_A)).to.equal(@"A");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_B)).to.equal(@"B");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_C)).to.equal(@"C");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_D)).to.equal(@"D");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_E)).to.equal(@"E");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_F)).to.equal(@"F");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_G)).to.equal(@"G");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_H)).to.equal(@"H");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_I)).to.equal(@"I");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_J)).to.equal(@"J");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_K)).to.equal(@"K");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_L)).to.equal(@"L");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_M)).to.equal(@"M");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_N)).to.equal(@"N");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_O)).to.equal(@"O");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_P)).to.equal(@"P");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_Q)).to.equal(@"Q");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_R)).to.equal(@"R");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_S)).to.equal(@"S");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_T)).to.equal(@"T");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_U)).to.equal(@"U");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_V)).to.equal(@"V");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_W)).to.equal(@"W");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_X)).to.equal(@"X");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_Y)).to.equal(@"Y");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_Z)).to.equal(@"Z");
+@interface SpectacleShortcutTranslationsTests : XCTestCase
+@end
 
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_0)).to.equal(@"0");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_1)).to.equal(@"1");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_2)).to.equal(@"2");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_3)).to.equal(@"3");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_4)).to.equal(@"4");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_5)).to.equal(@"5");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_6)).to.equal(@"6");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_7)).to.equal(@"7");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_8)).to.equal(@"8");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_9)).to.equal(@"9");
-  });
+@implementation SpectacleShortcutTranslationsTests
 
-  it(@"should translate keyboard layout independent key codes", ^{
-    expect(SpectacleTranslateKeyCode(kVK_F1)).to.equal(@"F1");
-    expect(SpectacleTranslateKeyCode(kVK_F2)).to.equal(@"F2");
-    expect(SpectacleTranslateKeyCode(kVK_F3)).to.equal(@"F3");
-    expect(SpectacleTranslateKeyCode(kVK_F4)).to.equal(@"F4");
-    expect(SpectacleTranslateKeyCode(kVK_F5)).to.equal(@"F5");
-    expect(SpectacleTranslateKeyCode(kVK_F6)).to.equal(@"F6");
-    expect(SpectacleTranslateKeyCode(kVK_F7)).to.equal(@"F7");
-    expect(SpectacleTranslateKeyCode(kVK_F8)).to.equal(@"F8");
-    expect(SpectacleTranslateKeyCode(kVK_F9)).to.equal(@"F9");
-    expect(SpectacleTranslateKeyCode(kVK_F10)).to.equal(@"F10");
-    expect(SpectacleTranslateKeyCode(kVK_F11)).to.equal(@"F11");
-    expect(SpectacleTranslateKeyCode(kVK_F12)).to.equal(@"F12");
-    expect(SpectacleTranslateKeyCode(kVK_F13)).to.equal(@"F13");
-    expect(SpectacleTranslateKeyCode(kVK_F14)).to.equal(@"F14");
-    expect(SpectacleTranslateKeyCode(kVK_F15)).to.equal(@"F15");
-    expect(SpectacleTranslateKeyCode(kVK_F16)).to.equal(@"F16");
-    expect(SpectacleTranslateKeyCode(kVK_F17)).to.equal(@"F17");
-    expect(SpectacleTranslateKeyCode(kVK_F18)).to.equal(@"F18");
-    expect(SpectacleTranslateKeyCode(kVK_F19)).to.equal(@"F19");
-    expect(SpectacleTranslateKeyCode(kVK_F20)).to.equal(@"F20");
+- (void)testShouldTranslateAlphanumericKeyCodes
+{
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_A), @"A");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_B), @"B");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_C), @"C");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_D), @"D");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_E), @"E");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_F), @"F");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_G), @"G");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_H), @"H");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_I), @"I");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_J), @"J");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_K), @"K");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_L), @"L");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_M), @"M");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_N), @"N");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_O), @"O");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_P), @"P");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_Q), @"Q");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_R), @"R");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_S), @"S");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_T), @"T");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_U), @"U");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_V), @"V");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_W), @"W");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_X), @"X");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_Y), @"Y");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_Z), @"Z");
 
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_KeypadDecimal)).to.equal(@".");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_KeypadMultiply)).to.equal(@"*");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_KeypadPlus)).to.equal(@"+");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_KeypadClear)).to.equal(@"⌧");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_KeypadDivide)).to.equal(@"/");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_KeypadEnter)).to.equal(@"⌤");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_KeypadMinus)).to.equal(@"-");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_KeypadEquals)).to.equal(@"=");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_Keypad0)).to.equal(@"0");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_Keypad1)).to.equal(@"1");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_Keypad2)).to.equal(@"2");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_Keypad3)).to.equal(@"3");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_Keypad4)).to.equal(@"4");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_Keypad5)).to.equal(@"5");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_Keypad6)).to.equal(@"6");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_Keypad7)).to.equal(@"7");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_Keypad8)).to.equal(@"8");
-    expect(SpectacleTranslateKeyCode(kVK_ANSI_Keypad9)).to.equal(@"9");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_0), @"0");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_1), @"1");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_2), @"2");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_3), @"3");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_4), @"4");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_5), @"5");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_6), @"6");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_7), @"7");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_8), @"8");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_9), @"9");
+}
 
-    expect(SpectacleTranslateKeyCode(kVK_Return)).to.equal(@"↩");
-    expect(SpectacleTranslateKeyCode(kVK_Tab)).to.equal(@"⇥");
-    expect(SpectacleTranslateKeyCode(kVK_Space)).to.equal(@"␣");
-    expect(SpectacleTranslateKeyCode(kVK_Delete)).to.equal(@"⌫");
-    expect(SpectacleTranslateKeyCode(kVK_Escape)).to.equal(@"⎋");
-    expect(SpectacleTranslateKeyCode(kVK_Command)).to.equal(@"⌘");
-    expect(SpectacleTranslateKeyCode(kVK_Shift)).to.equal(@"⇧");
-    expect(SpectacleTranslateKeyCode(kVK_CapsLock)).to.equal(@"⇪");
-    expect(SpectacleTranslateKeyCode(kVK_Option)).to.equal(@"⌥");
-    expect(SpectacleTranslateKeyCode(kVK_Control)).to.equal(@"⌃");
-    expect(SpectacleTranslateKeyCode(kVK_RightShift)).to.equal(@"");
-    expect(SpectacleTranslateKeyCode(kVK_RightOption)).to.equal(@"");
-    expect(SpectacleTranslateKeyCode(kVK_RightControl)).to.equal(@"");
-    expect(SpectacleTranslateKeyCode(kVK_Function)).to.equal(@"");
-    expect(SpectacleTranslateKeyCode(kVK_VolumeUp)).to.equal(@"");
-    expect(SpectacleTranslateKeyCode(kVK_VolumeDown)).to.equal(@"");
-    expect(SpectacleTranslateKeyCode(kVK_Mute)).to.equal(@"");
-    expect(SpectacleTranslateKeyCode(kVK_Help)).to.equal(@"");
-    expect(SpectacleTranslateKeyCode(kVK_Home)).to.equal(@"↖");
-    expect(SpectacleTranslateKeyCode(kVK_PageUp)).to.equal(@"⇞");
-    expect(SpectacleTranslateKeyCode(kVK_ForwardDelete)).to.equal(@"⌦");
-    expect(SpectacleTranslateKeyCode(kVK_End)).to.equal(@"↘");
-    expect(SpectacleTranslateKeyCode(kVK_PageDown)).to.equal(@"⇟");
-    expect(SpectacleTranslateKeyCode(kVK_LeftArrow)).to.equal(@"←");
-    expect(SpectacleTranslateKeyCode(kVK_RightArrow)).to.equal(@"→");
-    expect(SpectacleTranslateKeyCode(kVK_DownArrow)).to.equal(@"↓");
-    expect(SpectacleTranslateKeyCode(kVK_UpArrow)).to.equal(@"↑");
-  });
+- (void)testShouldTranslateKeyboardLayoutIndependentKeyCodes
+{
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_F1), @"F1");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_F2), @"F2");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_F3), @"F3");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_F4), @"F4");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_F5), @"F5");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_F6), @"F6");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_F7), @"F7");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_F8), @"F8");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_F9), @"F9");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_F10), @"F10");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_F11), @"F11");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_F12), @"F12");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_F13), @"F13");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_F14), @"F14");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_F15), @"F15");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_F16), @"F16");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_F17), @"F17");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_F18), @"F18");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_F19), @"F19");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_F20), @"F20");
 
-  it(@"should translate empty modifiers", ^{
-    expect(SpectacleTranslateModifiers(0)).to.equal(@"");
-  });
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_KeypadDecimal), @".");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_KeypadMultiply), @"*");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_KeypadPlus), @"+");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_KeypadClear), @"⌧");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_KeypadDivide), @"/");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_KeypadEnter), @"⌤");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_KeypadMinus), @"-");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_KeypadEquals), @"=");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_Keypad0), @"0");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_Keypad1), @"1");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_Keypad2), @"2");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_Keypad3), @"3");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_Keypad4), @"4");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_Keypad5), @"5");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_Keypad6), @"6");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_Keypad7), @"7");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_Keypad8), @"8");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ANSI_Keypad9), @"9");
 
-  it(@"should translate modifiers", ^{
-    expect(SpectacleTranslateModifiers(NSControlKeyMask)).to.equal(@"⌃");
-    expect(SpectacleTranslateModifiers(NSAlternateKeyMask)).to.equal(@"⌥");
-    expect(SpectacleTranslateModifiers(NSShiftKeyMask)).to.equal(@"⇧");
-    expect(SpectacleTranslateModifiers(NSCommandKeyMask)).to.equal(@"⌘");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_Return), @"↩");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_Tab), @"⇥");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_Space), @"␣");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_Delete), @"⌫");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_Escape), @"⎋");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_Command), @"⌘");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_Shift), @"⇧");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_CapsLock), @"⇪");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_Option), @"⌥");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_Control), @"⌃");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_RightShift), @"");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_RightOption), @"");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_RightControl), @"");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_Function), @"");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_VolumeUp), @"");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_VolumeDown), @"");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_Mute), @"");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_Help), @"");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_Home), @"↖");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_PageUp), @"⇞");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_ForwardDelete), @"⌦");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_End), @"↘");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_PageDown), @"⇟");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_LeftArrow), @"←");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_RightArrow), @"→");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_DownArrow), @"↓");
+  XCTAssertEqualObjects(SpectacleTranslateKeyCode(kVK_UpArrow), @"↑");
+}
 
-  });
+- (void)testShouldTranslateEmptyModifiers
+{
+  XCTAssertEqualObjects(SpectacleTranslateModifiers(0), @"");
+}
 
-  it(@"should translate shortcuts", ^{
-    expect(SpectacleTranslateShortcut(shortcutForKeyBinding(@"option+command+c"))).to.equal(@"⌥⌘C");
-    expect(SpectacleTranslateShortcut(shortcutForKeyBinding(@"option+command+f"))).to.equal(@"⌥⌘F");
-    expect(SpectacleTranslateShortcut(shortcutForKeyBinding(@"option+command+left"))).to.equal(@"⌥⌘←");
-    expect(SpectacleTranslateShortcut(shortcutForKeyBinding(@"option+command+right"))).to.equal(@"⌥⌘→");
-    expect(SpectacleTranslateShortcut(shortcutForKeyBinding(@"option+command+up"))).to.equal(@"⌥⌘↑");
-    expect(SpectacleTranslateShortcut(shortcutForKeyBinding(@"option+command+down"))).to.equal(@"⌥⌘↓");
-    expect(SpectacleTranslateShortcut(shortcutForKeyBinding(@"control+command+left"))).to.equal(@"⌃⌘←");
-    expect(SpectacleTranslateShortcut(shortcutForKeyBinding(@"control+shift+command+left"))).to.equal(@"⌃⇧⌘←");
-    expect(SpectacleTranslateShortcut(shortcutForKeyBinding(@"control+command+right"))).to.equal(@"⌃⌘→");
-    expect(SpectacleTranslateShortcut(shortcutForKeyBinding(@"control+shift+command+right"))).to.equal(@"⌃⇧⌘→");
-    expect(SpectacleTranslateShortcut(shortcutForKeyBinding(@"control+option+command+right"))).to.equal(@"⌃⌥⌘→");
-    expect(SpectacleTranslateShortcut(shortcutForKeyBinding(@"control+option+command+left"))).to.equal(@"⌃⌥⌘←");
-    expect(SpectacleTranslateShortcut(shortcutForKeyBinding(@"control+option+right"))).to.equal(@"⌃⌥→");
-    expect(SpectacleTranslateShortcut(shortcutForKeyBinding(@"control+option+left"))).to.equal(@"⌃⌥←");
-    expect(SpectacleTranslateShortcut(shortcutForKeyBinding(@"control+option+shift+right"))).to.equal(@"⌃⌥⇧→");
-    expect(SpectacleTranslateShortcut(shortcutForKeyBinding(@"control+option+shift+left"))).to.equal(@"⌃⌥⇧←");
-    expect(SpectacleTranslateShortcut(shortcutForKeyBinding(@"option+command+z"))).to.equal(@"⌥⌘Z");
-    expect(SpectacleTranslateShortcut(shortcutForKeyBinding(@"option+shift+command+z"))).to.equal(@"⌥⇧⌘Z");
-  });
+- (void)testShouldTranslateModifiers
+{
+  XCTAssertEqualObjects(SpectacleTranslateModifiers(NSControlKeyMask), @"⌃");
+  XCTAssertEqualObjects(SpectacleTranslateModifiers(NSAlternateKeyMask), @"⌥");
+  XCTAssertEqualObjects(SpectacleTranslateModifiers(NSShiftKeyMask), @"⇧");
+  XCTAssertEqualObjects(SpectacleTranslateModifiers(NSCommandKeyMask), @"⌘");
+}
 
-  it(@"should convert empty modifiers", ^{
-    expect(SpectacleConvertCocoaModifiersToCarbon(0)).to.equal(0);
-    expect(SpectacleConvertCarbonModifiersToCocoa(0)).to.equal(0);
-  });
+- (void)testShouldTranslateShortcuts
+{
+  XCTAssertEqualObjects(SpectacleTranslateShortcut(shortcutForKeyBinding(@"option+command+c")), @"⌥⌘C");
+  XCTAssertEqualObjects(SpectacleTranslateShortcut(shortcutForKeyBinding(@"option+command+f")), @"⌥⌘F");
+  XCTAssertEqualObjects(SpectacleTranslateShortcut(shortcutForKeyBinding(@"option+command+left")), @"⌥⌘←");
+  XCTAssertEqualObjects(SpectacleTranslateShortcut(shortcutForKeyBinding(@"option+command+right")), @"⌥⌘→");
+  XCTAssertEqualObjects(SpectacleTranslateShortcut(shortcutForKeyBinding(@"option+command+up")), @"⌥⌘↑");
+  XCTAssertEqualObjects(SpectacleTranslateShortcut(shortcutForKeyBinding(@"option+command+down")), @"⌥⌘↓");
+  XCTAssertEqualObjects(SpectacleTranslateShortcut(shortcutForKeyBinding(@"control+command+left")), @"⌃⌘←");
+  XCTAssertEqualObjects(SpectacleTranslateShortcut(shortcutForKeyBinding(@"control+shift+command+left")), @"⌃⇧⌘←");
+  XCTAssertEqualObjects(SpectacleTranslateShortcut(shortcutForKeyBinding(@"control+command+right")), @"⌃⌘→");
+  XCTAssertEqualObjects(SpectacleTranslateShortcut(shortcutForKeyBinding(@"control+shift+command+right")), @"⌃⇧⌘→");
+  XCTAssertEqualObjects(SpectacleTranslateShortcut(shortcutForKeyBinding(@"control+option+command+right")), @"⌃⌥⌘→");
+  XCTAssertEqualObjects(SpectacleTranslateShortcut(shortcutForKeyBinding(@"control+option+command+left")), @"⌃⌥⌘←");
+  XCTAssertEqualObjects(SpectacleTranslateShortcut(shortcutForKeyBinding(@"control+option+right")), @"⌃⌥→");
+  XCTAssertEqualObjects(SpectacleTranslateShortcut(shortcutForKeyBinding(@"control+option+left")), @"⌃⌥←");
+  XCTAssertEqualObjects(SpectacleTranslateShortcut(shortcutForKeyBinding(@"control+option+shift+right")), @"⌃⌥⇧→");
+  XCTAssertEqualObjects(SpectacleTranslateShortcut(shortcutForKeyBinding(@"control+option+shift+left")), @"⌃⌥⇧←");
+  XCTAssertEqualObjects(SpectacleTranslateShortcut(shortcutForKeyBinding(@"option+command+z")), @"⌥⌘Z");
+  XCTAssertEqualObjects(SpectacleTranslateShortcut(shortcutForKeyBinding(@"option+shift+command+z")), @"⌥⇧⌘Z");
+}
 
-  it(@"should convert invalid modifiers", ^{
-    expect(SpectacleConvertCocoaModifiersToCarbon(42)).to.equal(0);
-    expect(SpectacleConvertCarbonModifiersToCocoa(42)).to.equal(0);
-  });
+- (void)testShouldConvertEmptyModifiers
+{
+  XCTAssertEqual(SpectacleConvertCocoaModifiersToCarbon(0), 0);
+  XCTAssertEqual(SpectacleConvertCarbonModifiersToCocoa(0), 0);
+}
 
-  it(@"should convert Cocoa modifiers to Carbon modifiers", ^{
-    expect(SpectacleConvertCocoaModifiersToCarbon(NSControlKeyMask)).to.equal(controlKey);
-    expect(SpectacleConvertCocoaModifiersToCarbon(NSAlternateKeyMask)).to.equal(optionKey);
-    expect(SpectacleConvertCocoaModifiersToCarbon(NSShiftKeyMask)).to.equal(shiftKey);
-    expect(SpectacleConvertCocoaModifiersToCarbon(NSCommandKeyMask)).to.equal(cmdKey);
-  });
+- (void)testShouldConvertInvalidModifiers
+{
+  XCTAssertEqual(SpectacleConvertCocoaModifiersToCarbon(42), 0);
+  XCTAssertEqual(SpectacleConvertCarbonModifiersToCocoa(42), 0);
+}
 
-  it(@"should convert Carbon modifiers to Cocoa modifiers", ^{
-    expect(SpectacleConvertCarbonModifiersToCocoa(controlKey)).to.equal(NSControlKeyMask);
-    expect(SpectacleConvertCarbonModifiersToCocoa(optionKey)).to.equal(NSAlternateKeyMask);
-    expect(SpectacleConvertCarbonModifiersToCocoa(shiftKey)).to.equal(NSShiftKeyMask);
-    expect(SpectacleConvertCarbonModifiersToCocoa(cmdKey)).to.equal(NSCommandKeyMask);
-  });
+- (void)testShouldConvertCocoaModifiersToCarbonModifiers
+{
+  XCTAssertEqual(SpectacleConvertCocoaModifiersToCarbon(NSControlKeyMask), controlKey);
+  XCTAssertEqual(SpectacleConvertCocoaModifiersToCarbon(NSAlternateKeyMask), optionKey);
+  XCTAssertEqual(SpectacleConvertCocoaModifiersToCarbon(NSShiftKeyMask), shiftKey);
+  XCTAssertEqual(SpectacleConvertCocoaModifiersToCarbon(NSCommandKeyMask), cmdKey);
+}
 
-  it(@"should convert modifiers to Carbon modifiers if necessary", ^{
-    expect(SpectacleConvertModifiersToCarbonIfNecessary(controlKey)).to.equal(controlKey);
-    expect(SpectacleConvertModifiersToCarbonIfNecessary(optionKey)).to.equal(optionKey);
-    expect(SpectacleConvertModifiersToCarbonIfNecessary(shiftKey)).to.equal(shiftKey);
-    expect(SpectacleConvertModifiersToCarbonIfNecessary(cmdKey)).to.equal(cmdKey);
-    expect(SpectacleConvertModifiersToCarbonIfNecessary(NSControlKeyMask)).to.equal(controlKey);
-    expect(SpectacleConvertModifiersToCarbonIfNecessary(NSAlternateKeyMask)).to.equal(optionKey);
-    expect(SpectacleConvertModifiersToCarbonIfNecessary(NSShiftKeyMask)).to.equal(shiftKey);
-    expect(SpectacleConvertModifiersToCarbonIfNecessary(NSCommandKeyMask)).to.equal(cmdKey);
-  });
+- (void)testShouldConvertCarbonModifiersToCocoaModifiers
+{
+  XCTAssertEqual(SpectacleConvertCarbonModifiersToCocoa(controlKey), NSControlKeyMask);
+  XCTAssertEqual(SpectacleConvertCarbonModifiersToCocoa(optionKey), NSAlternateKeyMask);
+  XCTAssertEqual(SpectacleConvertCarbonModifiersToCocoa(shiftKey), NSShiftKeyMask);
+  XCTAssertEqual(SpectacleConvertCarbonModifiersToCocoa(cmdKey), NSCommandKeyMask);
+}
 
-  it(@"should convert modifiers to Cocoa modifiers if necessary", ^{
-    expect(SpectacleConvertModifiersToCocoaIfNecessary(NSControlKeyMask)).to.equal(NSControlKeyMask);
-    expect(SpectacleConvertModifiersToCocoaIfNecessary(NSAlternateKeyMask)).to.equal(NSAlternateKeyMask);
-    expect(SpectacleConvertModifiersToCocoaIfNecessary(NSShiftKeyMask)).to.equal(NSShiftKeyMask);
-    expect(SpectacleConvertModifiersToCocoaIfNecessary(NSCommandKeyMask)).to.equal(NSCommandKeyMask);
-    expect(SpectacleConvertModifiersToCocoaIfNecessary(controlKey)).to.equal(NSControlKeyMask);
-    expect(SpectacleConvertModifiersToCocoaIfNecessary(optionKey)).to.equal(NSAlternateKeyMask);
-    expect(SpectacleConvertModifiersToCocoaIfNecessary(shiftKey)).to.equal(NSShiftKeyMask);
-    expect(SpectacleConvertModifiersToCocoaIfNecessary(cmdKey)).to.equal(NSCommandKeyMask);
-  });
-});
-SpecEnd
+- (void)testShouldConvertModifiersToCarbonModifiersIfNecessary
+{
+  XCTAssertEqual(SpectacleConvertModifiersToCarbonIfNecessary(controlKey), controlKey);
+  XCTAssertEqual(SpectacleConvertModifiersToCarbonIfNecessary(optionKey), optionKey);
+  XCTAssertEqual(SpectacleConvertModifiersToCarbonIfNecessary(shiftKey), shiftKey);
+  XCTAssertEqual(SpectacleConvertModifiersToCarbonIfNecessary(cmdKey), cmdKey);
+  XCTAssertEqual(SpectacleConvertModifiersToCarbonIfNecessary(NSControlKeyMask), controlKey);
+  XCTAssertEqual(SpectacleConvertModifiersToCarbonIfNecessary(NSAlternateKeyMask), optionKey);
+  XCTAssertEqual(SpectacleConvertModifiersToCarbonIfNecessary(NSShiftKeyMask), shiftKey);
+  XCTAssertEqual(SpectacleConvertModifiersToCarbonIfNecessary(NSCommandKeyMask), cmdKey);
+}
+
+- (void)testShouldConvertModifiersToCocoaModifiersIfNecessary
+{
+  XCTAssertEqual(SpectacleConvertModifiersToCocoaIfNecessary(NSControlKeyMask), NSControlKeyMask);
+  XCTAssertEqual(SpectacleConvertModifiersToCocoaIfNecessary(NSAlternateKeyMask), NSAlternateKeyMask);
+  XCTAssertEqual(SpectacleConvertModifiersToCocoaIfNecessary(NSShiftKeyMask), NSShiftKeyMask);
+  XCTAssertEqual(SpectacleConvertModifiersToCocoaIfNecessary(NSCommandKeyMask), NSCommandKeyMask);
+  XCTAssertEqual(SpectacleConvertModifiersToCocoaIfNecessary(controlKey), NSControlKeyMask);
+  XCTAssertEqual(SpectacleConvertModifiersToCocoaIfNecessary(optionKey), NSAlternateKeyMask);
+  XCTAssertEqual(SpectacleConvertModifiersToCocoaIfNecessary(shiftKey), NSShiftKeyMask);
+  XCTAssertEqual(SpectacleConvertModifiersToCocoaIfNecessary(cmdKey), NSCommandKeyMask);
+}
+
+@end
 
 static SpectacleShortcut *shortcutForKeyBinding(NSString *keyBinding)
 {

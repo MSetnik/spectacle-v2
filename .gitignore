@@ -17,5 +17,4 @@ DerivedData
 *.ipa
 *.xcuserstate
 
-Carthage/Build
-Carthage/Checkouts
+.DS_Store
