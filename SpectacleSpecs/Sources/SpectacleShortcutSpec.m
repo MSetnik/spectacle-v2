@@ -1,86 +1,98 @@
 #import <Carbon/Carbon.h>
 #import <Cocoa/Cocoa.h>
-#import <Expecta/Expecta.h>
-#import <Specta/Specta.h>
+#import <XCTest/XCTest.h>
 
 #import "SpectacleShortcut.h"
 
-SpecBegin(SpectacleShortcut)
-describe(@"SpectacleShortcut", ^{
-  it(@"should be initialized with a key binding", ^{
-    SpectacleShortcut *shortcut = [[SpectacleShortcut alloc] initWithShortcutName:@"MoveToCenter"
-                                                               shortcutKeyBinding:@"option+command+c"];
-    expect(shortcut.shortcutKeyCode).to.equal(kVK_ANSI_C);
-    expect(shortcut.shortcutModifiers).to.equal(optionKey | cmdKey);
-  });
+@interface SpectacleShortcutTests : XCTestCase
+@end
 
-  it(@"should be copied with a new shortcut action", ^{
-    SpectacleShortcut *shortcut = [[SpectacleShortcut alloc] initWithShortcutName:@"MoveToCenter"
-                                                                  shortcutKeyCode:kVK_ANSI_C
-                                                                shortcutModifiers:NSAlternateKeyMask | NSCommandKeyMask];
-    expect(shortcut.shortcutAction).to.beFalsy;
-    expect([shortcut copyWithShortcutAction:^(SpectacleShortcut *shortcut) {}].shortcutAction).to.beTruthy;
-  });
+@implementation SpectacleShortcutTests
 
-  it(@"should trigger shortcut actions", ^{
-    __block BOOL shortcutActionTriggered;
-    SpectacleShortcut *shortcut = [[SpectacleShortcut alloc] initWithShortcutName:@"MoveToCenter"
-                                                                  shortcutKeyCode:kVK_ANSI_C
-                                                                shortcutModifiers:NSAlternateKeyMask | NSCommandKeyMask
-                                                                   shortcutAction:^(SpectacleShortcut *shortcut) {
-                                                                     shortcutActionTriggered = YES;
-                                                                   }];
-    [shortcut triggerShortcutAction];
-    expect(shortcutActionTriggered).to.beTruthy;
-  });
+- (void)testShouldBeInitializedWithAKeyBinding
+{
+  SpectacleShortcut *shortcut = [[SpectacleShortcut alloc] initWithShortcutName:@"MoveToCenter"
+                                                             shortcutKeyBinding:@"option+command+c"];
+  XCTAssertEqual(shortcut.shortcutKeyCode, kVK_ANSI_C);
+  XCTAssertEqual(shortcut.shortcutModifiers, optionKey | cmdKey);
+}
 
-  it(@"should determine if the shortcut is cleared", ^{
-    expect([[[SpectacleShortcut alloc] initWithShortcutName:nil shortcutKeyBinding:nil] isClearedShortcut]).to.beTruthy;
-    expect([[[SpectacleShortcut alloc] initWithShortcutName:nil shortcutKeyBinding:@""] isClearedShortcut]).to.beTruthy;
-    expect([[[SpectacleShortcut alloc] initWithShortcutName:nil
-                                            shortcutKeyCode:-1
-                                          shortcutModifiers:0] isClearedShortcut]).to.beTruthy;
-    expect([[[SpectacleShortcut alloc] initWithShortcutName:@"MoveToCenter"
-                                            shortcutKeyCode:-1
-                                          shortcutModifiers:0] isClearedShortcut]).to.beTruthy;
-  });
+- (void)testShouldBeCopiedWithANewShortcutAction
+{
+  SpectacleShortcut *shortcut = [[SpectacleShortcut alloc] initWithShortcutName:@"MoveToCenter"
+                                                                shortcutKeyCode:kVK_ANSI_C
+                                                              shortcutModifiers:NSAlternateKeyMask | NSCommandKeyMask];
+  XCTAssertFalse(shortcut.shortcutAction);
+  XCTAssertTrue([shortcut copyWithShortcutAction:^(SpectacleShortcut *shortcut) {}].shortcutAction);
+}
 
-  it(@"should provide a display string", ^{
-    expect([[[SpectacleShortcut alloc] initWithShortcutName:@"MoveToCenter"
-                                            shortcutKeyCode:kVK_ANSI_C
-                                          shortcutModifiers:NSAlternateKeyMask | NSCommandKeyMask] displayString]).to.equal(@"⌥⌘C");
-  });
+- (void)testShouldTriggerShortcutActions
+{
+  __block BOOL shortcutActionTriggered = NO;
+  SpectacleShortcut *shortcut = [[SpectacleShortcut alloc] initWithShortcutName:@"MoveToCenter"
+                                                                shortcutKeyCode:kVK_ANSI_C
+                                                              shortcutModifiers:NSAlternateKeyMask | NSCommandKeyMask
+                                                                 shortcutAction:^(SpectacleShortcut *shortcut) {
+                                                                   shortcutActionTriggered = YES;
+                                                                 }];
+  [shortcut triggerShortcutAction];
+  XCTAssertTrue(shortcutActionTriggered);
+}
 
-  it(@"should provide a key binding", ^{
-    SpectacleShortcut *shortcut = [[SpectacleShortcut alloc] initWithShortcutName:@"MoveToCenter"
-                                                               shortcutKeyBinding:@"alt+cmd+c"];
-    expect(shortcut.shortcutKeyBinding).to.equal(@"alt+cmd+c");
-  });
+- (void)testShouldDetermineIfTheShortcutIsCleared
+{
+  XCTAssertTrue([[[SpectacleShortcut alloc] initWithShortcutName:nil shortcutKeyBinding:nil] isClearedShortcut]);
+  XCTAssertTrue([[[SpectacleShortcut alloc] initWithShortcutName:nil shortcutKeyBinding:@""] isClearedShortcut]);
+  XCTAssertTrue([[[SpectacleShortcut alloc] initWithShortcutName:nil
+                                          shortcutKeyCode:-1
+                                        shortcutModifiers:0] isClearedShortcut]);
+  XCTAssertTrue([[[SpectacleShortcut alloc] initWithShortcutName:@"MoveToCenter"
+                                          shortcutKeyCode:-1
+                                        shortcutModifiers:0] isClearedShortcut]);
+}
 
-  it(@"should support equality", ^{
-    SpectacleShortcut *shortcut1 = [[SpectacleShortcut alloc] initWithShortcutName:@"MoveToCenter"
-                                                                   shortcutKeyCode:kVK_ANSI_C
-                                                                 shortcutModifiers:NSAlternateKeyMask | NSCommandKeyMask];
-    SpectacleShortcut *shortcut2 = [[SpectacleShortcut alloc] initWithShortcutName:@"MoveToCenter"
-                                                                   shortcutKeyCode:kVK_ANSI_C
-                                                                 shortcutModifiers:NSAlternateKeyMask | NSCommandKeyMask];
-    SpectacleShortcut *shortcut3 = [[SpectacleShortcut alloc] initWithShortcutName:nil
-                                                                   shortcutKeyCode:kVK_ANSI_C
-                                                                 shortcutModifiers:NSAlternateKeyMask | NSCommandKeyMask];
-    expect(shortcut1).to.equal(shortcut2);
-    expect(shortcut1).to.equal(shortcut3);
-    expect(shortcut1).notTo.equal([[SpectacleShortcut alloc] initWithShortcutName:nil
-                                                                  shortcutKeyCode:-1
-                                                                shortcutModifiers:0]);
-  });
+- (void)testShouldProvideADisplayString
+{
+  XCTAssertEqualObjects([[[SpectacleShortcut alloc] initWithShortcutName:@"MoveToCenter"
+                                          shortcutKeyCode:kVK_ANSI_C
+                                        shortcutModifiers:NSAlternateKeyMask | NSCommandKeyMask] displayString], @"⌥⌘C");
+}
 
-  it(@"should determine if the shortcut is contains modifiers", ^{
-    SpectacleShortcut *shortcut = [[SpectacleShortcut alloc] initWithShortcutName:@"MoveToCenter"
-                                                                  shortcutKeyCode:kVK_ANSI_C
-                                                                shortcutModifiers:NSAlternateKeyMask | NSCommandKeyMask];
-    expect([shortcut containsModifiers:NSAlternateKeyMask]).to.beTruthy;
-    expect([shortcut containsModifiers:NSAlternateKeyMask | NSCommandKeyMask]).to.beTruthy;
-    expect([shortcut containsModifiers:NSControlKeyMask]).to.beFalsy;
-  });
-});
-SpecEnd
+- (void)testShouldProvideAKeyBinding
+{
+  SpectacleShortcut *shortcut = [[SpectacleShortcut alloc] initWithShortcutName:@"MoveToCenter"
+                                                             shortcutKeyBinding:@"alt+cmd+c"];
+  XCTAssertEqualObjects(shortcut.shortcutKeyBinding, @"alt+cmd+c");
+}
+
+- (void)testShouldSupportEquality
+{
+  SpectacleShortcut *shortcut1 = [[SpectacleShortcut alloc] initWithShortcutName:@"MoveToCenter"
+                                                                 shortcutKeyCode:kVK_ANSI_C
+                                                               shortcutModifiers:NSAlternateKeyMask | NSCommandKeyMask];
+  SpectacleShortcut *shortcut2 = [[SpectacleShortcut alloc] initWithShortcutName:@"MoveToCenter"
+                                                                 shortcutKeyCode:kVK_ANSI_C
+                                                               shortcutModifiers:NSAlternateKeyMask | NSCommandKeyMask];
+  SpectacleShortcut *shortcut3 = [[SpectacleShortcut alloc] initWithShortcutName:nil
+                                                                 shortcutKeyCode:kVK_ANSI_C
+                                                               shortcutModifiers:NSAlternateKeyMask | NSCommandKeyMask];
+  XCTAssertEqualObjects(shortcut1, shortcut2);
+  XCTAssertEqualObjects(shortcut1, shortcut3);
+  XCTAssertNotEqualObjects(shortcut1, [[SpectacleShortcut alloc] initWithShortcutName:nil
+                                                                shortcutKeyCode:-1
+                                                              shortcutModifiers:0]);
+}
+
+- (void)testMatchesExactModifiersForShortcutConflictDetection
+{
+  SpectacleShortcut *shortcut = [[SpectacleShortcut alloc] initWithShortcutName:@"MoveToCenter"
+                                                                shortcutKeyCode:kVK_ANSI_C
+                                                              shortcutModifiers:NSAlternateKeyMask | NSCommandKeyMask];
+  // A subset must not conflict: Option+C and Option+Command+C are distinct shortcuts.
+  XCTAssertFalse([shortcut containsModifiers:NSAlternateKeyMask]);
+  XCTAssertTrue([shortcut containsModifiers:NSAlternateKeyMask | NSCommandKeyMask]);
+  XCTAssertTrue([shortcut containsModifiers:optionKey | cmdKey]);
+  XCTAssertFalse([shortcut containsModifiers:NSControlKeyMask]);
+}
+
+@end

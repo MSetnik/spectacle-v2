@@ -1,327 +1,345 @@
 #import <Carbon/Carbon.h>
-#import <Expecta/Expecta.h>
-#import <Specta/Specta.h>
+#import <XCTest/XCTest.h>
 
 #import "SpectacleShortcut.h"
 #import "SpectacleShortcutKeyBindings.h"
 
 static SpectacleShortcut *shortcutForKeyBinding(NSString *keyBinding);
 
-SpecBegin(SpectacleShortcutKeyBindings)
-describe(@"SpectacleShortcutKeyBindings", ^{
-  it(@"should convert an empty or nil key binding to nil modifiers", ^{
-    expect(SpectacleConvertShortcutKeyBindingToModifiers(nil)).to.equal(nil);
-    expect(SpectacleConvertShortcutKeyBindingToModifiers(@"")).to.equal(nil);
-    expect(SpectacleConvertShortcutKeyBindingToModifiers(@" ")).to.equal(nil);
-  });
+@interface SpectacleShortcutKeyBindingsTests : XCTestCase
+@end
 
-  it(@"should convert key bindings to modifiers", ^{
-    expect(SpectacleConvertShortcutKeyBindingToModifiers(@"cmd+c")).to.equal(cmdKey);
-    expect(SpectacleConvertShortcutKeyBindingToModifiers(@"shift+cmd+c")).to.equal(shiftKey |cmdKey);
-    expect(SpectacleConvertShortcutKeyBindingToModifiers(@"alt+shift+cmd+c")).to.equal(optionKey | shiftKey |cmdKey);
-    expect(SpectacleConvertShortcutKeyBindingToModifiers(@"ctrl+alt+shift+cmd+c")).to.equal(controlKey | optionKey | shiftKey | cmdKey);
-    expect(SpectacleConvertShortcutKeyBindingToModifiers(@"command+c")).to.equal(cmdKey);
-    expect(SpectacleConvertShortcutKeyBindingToModifiers(@"shift+command+c")).to.equal(shiftKey |cmdKey);
-    expect(SpectacleConvertShortcutKeyBindingToModifiers(@"option+shift+command+c")).to.equal(optionKey | shiftKey |cmdKey);
-    expect(SpectacleConvertShortcutKeyBindingToModifiers(@"control+option+shift+command+c")).to.equal(controlKey | optionKey | shiftKey | cmdKey);
-  });
+@implementation SpectacleShortcutKeyBindingsTests
 
-  it(@"should convert mixed case key bindings to modifiers", ^{
-    expect(SpectacleConvertShortcutKeyBindingToModifiers(@"Cmd+C")).to.equal(cmdKey);
-    expect(SpectacleConvertShortcutKeyBindingToModifiers(@"Shift+Cmd+C")).to.equal(shiftKey |cmdKey);
-    expect(SpectacleConvertShortcutKeyBindingToModifiers(@"Alt+Shift+Cmd+C")).to.equal(optionKey | shiftKey |cmdKey);
-    expect(SpectacleConvertShortcutKeyBindingToModifiers(@"Ctrl+Alt+Shift+Cmd+C")).to.equal(controlKey | optionKey | shiftKey | cmdKey);
-    expect(SpectacleConvertShortcutKeyBindingToModifiers(@"COMMAND+C")).to.equal(cmdKey);
-    expect(SpectacleConvertShortcutKeyBindingToModifiers(@"SHIFT+COMMAND+C")).to.equal(shiftKey |cmdKey);
-    expect(SpectacleConvertShortcutKeyBindingToModifiers(@"OPTION+SHIFT+COMMAND+C")).to.equal(optionKey | shiftKey |cmdKey);
-    expect(SpectacleConvertShortcutKeyBindingToModifiers(@"CONTROL+OPTION+SHIFT+COMMAND+C")).to.equal(controlKey | optionKey | shiftKey | cmdKey);
-  });
+- (void)testShouldConvertAnEmptyOrNilKeyBindingToNilModifiers
+{
+  XCTAssertNil(SpectacleConvertShortcutKeyBindingToModifiers(nil));
+  XCTAssertNil(SpectacleConvertShortcutKeyBindingToModifiers(@""));
+  XCTAssertNil(SpectacleConvertShortcutKeyBindingToModifiers(@" "));
+}
 
-  it(@"should convert key bindings with whitespace to modifiers", ^{
-    expect(SpectacleConvertShortcutKeyBindingToModifiers(@" alt  +   shift    +     cmd    +c")).to.equal(optionKey | shiftKey |cmdKey);
-  });
+- (void)testShouldConvertKeyBindingsToModifiers
+{
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToModifiers(@"cmd+c"), @(cmdKey));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToModifiers(@"shift+cmd+c"), @(shiftKey |cmdKey));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToModifiers(@"alt+shift+cmd+c"), @(optionKey | shiftKey |cmdKey));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToModifiers(@"ctrl+alt+shift+cmd+c"), @(controlKey | optionKey | shiftKey | cmdKey));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToModifiers(@"command+c"), @(cmdKey));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToModifiers(@"shift+command+c"), @(shiftKey |cmdKey));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToModifiers(@"option+shift+command+c"), @(optionKey | shiftKey |cmdKey));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToModifiers(@"control+option+shift+command+c"), @(controlKey | optionKey | shiftKey | cmdKey));
+}
 
-  it(@"should convert an empty or nil key binding to nil key codes", ^{
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(nil)).to.equal(nil);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"")).to.equal(nil);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@" ")).to.equal(nil);
-  });
+- (void)testShouldConvertMixedCaseKeyBindingsToModifiers
+{
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToModifiers(@"Cmd+C"), @(cmdKey));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToModifiers(@"Shift+Cmd+C"), @(shiftKey |cmdKey));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToModifiers(@"Alt+Shift+Cmd+C"), @(optionKey | shiftKey |cmdKey));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToModifiers(@"Ctrl+Alt+Shift+Cmd+C"), @(controlKey | optionKey | shiftKey | cmdKey));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToModifiers(@"COMMAND+C"), @(cmdKey));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToModifiers(@"SHIFT+COMMAND+C"), @(shiftKey |cmdKey));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToModifiers(@"OPTION+SHIFT+COMMAND+C"), @(optionKey | shiftKey |cmdKey));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToModifiers(@"CONTROL+OPTION+SHIFT+COMMAND+C"), @(controlKey | optionKey | shiftKey | cmdKey));
+}
 
-  it(@"should convert lowercase alphabetical key bindings to key codes", ^{
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"a")).to.equal(kVK_ANSI_A);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"b")).to.equal(kVK_ANSI_B);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"c")).to.equal(kVK_ANSI_C);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"d")).to.equal(kVK_ANSI_D);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"e")).to.equal(kVK_ANSI_E);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"f")).to.equal(kVK_ANSI_F);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"g")).to.equal(kVK_ANSI_G);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"h")).to.equal(kVK_ANSI_H);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"i")).to.equal(kVK_ANSI_I);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"j")).to.equal(kVK_ANSI_J);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"k")).to.equal(kVK_ANSI_K);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"l")).to.equal(kVK_ANSI_L);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"m")).to.equal(kVK_ANSI_M);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"n")).to.equal(kVK_ANSI_N);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"o")).to.equal(kVK_ANSI_O);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"p")).to.equal(kVK_ANSI_P);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"q")).to.equal(kVK_ANSI_Q);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"r")).to.equal(kVK_ANSI_R);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"s")).to.equal(kVK_ANSI_S);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"t")).to.equal(kVK_ANSI_T);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"u")).to.equal(kVK_ANSI_U);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"v")).to.equal(kVK_ANSI_V);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"w")).to.equal(kVK_ANSI_W);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"x")).to.equal(kVK_ANSI_X);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"y")).to.equal(kVK_ANSI_Y);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"z")).to.equal(kVK_ANSI_Z);
-  });
+- (void)testShouldConvertKeyBindingsWithWhitespaceToModifiers
+{
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToModifiers(@" alt  +   shift    +     cmd    +c"), @(optionKey | shiftKey |cmdKey));
+}
 
-  it(@"should convert uppercase alphabetical key bindings to key codes", ^{
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"A")).to.equal(kVK_ANSI_A);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"B")).to.equal(kVK_ANSI_B);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"C")).to.equal(kVK_ANSI_C);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"D")).to.equal(kVK_ANSI_D);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"E")).to.equal(kVK_ANSI_E);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"F")).to.equal(kVK_ANSI_F);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"G")).to.equal(kVK_ANSI_G);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"H")).to.equal(kVK_ANSI_H);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"I")).to.equal(kVK_ANSI_I);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"J")).to.equal(kVK_ANSI_J);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"K")).to.equal(kVK_ANSI_K);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"L")).to.equal(kVK_ANSI_L);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"M")).to.equal(kVK_ANSI_M);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"N")).to.equal(kVK_ANSI_N);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"O")).to.equal(kVK_ANSI_O);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"P")).to.equal(kVK_ANSI_P);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Q")).to.equal(kVK_ANSI_Q);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"R")).to.equal(kVK_ANSI_R);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"S")).to.equal(kVK_ANSI_S);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"T")).to.equal(kVK_ANSI_T);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"U")).to.equal(kVK_ANSI_U);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"V")).to.equal(kVK_ANSI_V);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"W")).to.equal(kVK_ANSI_W);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"X")).to.equal(kVK_ANSI_X);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Y")).to.equal(kVK_ANSI_Y);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Z")).to.equal(kVK_ANSI_Z);
-  });
+- (void)testShouldConvertAnEmptyOrNilKeyBindingToNilKeyCodes
+{
+  XCTAssertNil(SpectacleConvertShortcutKeyBindingToKeyCode(nil));
+  XCTAssertNil(SpectacleConvertShortcutKeyBindingToKeyCode(@""));
+  XCTAssertNil(SpectacleConvertShortcutKeyBindingToKeyCode(@" "));
+}
 
-  it(@"should convert numeric key bindings to key codes", ^{
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"0")).to.equal(kVK_ANSI_0);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"1")).to.equal(kVK_ANSI_1);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"2")).to.equal(kVK_ANSI_2);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"3")).to.equal(kVK_ANSI_3);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"4")).to.equal(kVK_ANSI_4);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"5")).to.equal(kVK_ANSI_5);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"6")).to.equal(kVK_ANSI_6);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"7")).to.equal(kVK_ANSI_7);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"8")).to.equal(kVK_ANSI_8);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"9")).to.equal(kVK_ANSI_9);
-  });
+- (void)testShouldConvertLowercaseAlphabeticalKeyBindingsToKeyCodes
+{
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"a"), @(kVK_ANSI_A));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"b"), @(kVK_ANSI_B));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"c"), @(kVK_ANSI_C));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"d"), @(kVK_ANSI_D));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"e"), @(kVK_ANSI_E));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"f"), @(kVK_ANSI_F));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"g"), @(kVK_ANSI_G));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"h"), @(kVK_ANSI_H));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"i"), @(kVK_ANSI_I));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"j"), @(kVK_ANSI_J));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"k"), @(kVK_ANSI_K));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"l"), @(kVK_ANSI_L));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"m"), @(kVK_ANSI_M));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"n"), @(kVK_ANSI_N));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"o"), @(kVK_ANSI_O));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"p"), @(kVK_ANSI_P));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"q"), @(kVK_ANSI_Q));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"r"), @(kVK_ANSI_R));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"s"), @(kVK_ANSI_S));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"t"), @(kVK_ANSI_T));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"u"), @(kVK_ANSI_U));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"v"), @(kVK_ANSI_V));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"w"), @(kVK_ANSI_W));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"x"), @(kVK_ANSI_X));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"y"), @(kVK_ANSI_Y));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"z"), @(kVK_ANSI_Z));
+}
 
-  it(@"should convert alphabetical key bindings with modifiers to key codes", ^{
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"cmd+a")).to.equal(kVK_ANSI_A);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"shift+cmd+b")).to.equal(kVK_ANSI_B);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"alt+shift+cmd+c")).to.equal(kVK_ANSI_C);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"ctrl+alt+shift+cmd+d")).to.equal(kVK_ANSI_D);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"command+e")).to.equal(kVK_ANSI_E);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"shift+command+f")).to.equal(kVK_ANSI_F);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"option+shift+command+g")).to.equal(kVK_ANSI_G);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"control+option+shift+command+h")).to.equal(kVK_ANSI_H);
-  });
+- (void)testShouldConvertUppercaseAlphabeticalKeyBindingsToKeyCodes
+{
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"A"), @(kVK_ANSI_A));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"B"), @(kVK_ANSI_B));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"C"), @(kVK_ANSI_C));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"D"), @(kVK_ANSI_D));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"E"), @(kVK_ANSI_E));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"F"), @(kVK_ANSI_F));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"G"), @(kVK_ANSI_G));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"H"), @(kVK_ANSI_H));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"I"), @(kVK_ANSI_I));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"J"), @(kVK_ANSI_J));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"K"), @(kVK_ANSI_K));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"L"), @(kVK_ANSI_L));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"M"), @(kVK_ANSI_M));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"N"), @(kVK_ANSI_N));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"O"), @(kVK_ANSI_O));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"P"), @(kVK_ANSI_P));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Q"), @(kVK_ANSI_Q));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"R"), @(kVK_ANSI_R));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"S"), @(kVK_ANSI_S));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"T"), @(kVK_ANSI_T));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"U"), @(kVK_ANSI_U));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"V"), @(kVK_ANSI_V));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"W"), @(kVK_ANSI_W));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"X"), @(kVK_ANSI_X));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Y"), @(kVK_ANSI_Y));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Z"), @(kVK_ANSI_Z));
+}
 
-  it(@"should convert alphanumeric key bindings with whitespace to key codes", ^{
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@" cmd  +   a    ")).to.equal(kVK_ANSI_A);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@" shift  +   cmd    +     0      ")).to.equal(kVK_ANSI_0);
-  });
+- (void)testShouldConvertNumericKeyBindingsToKeyCodes
+{
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"0"), @(kVK_ANSI_0));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"1"), @(kVK_ANSI_1));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"2"), @(kVK_ANSI_2));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"3"), @(kVK_ANSI_3));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"4"), @(kVK_ANSI_4));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"5"), @(kVK_ANSI_5));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"6"), @(kVK_ANSI_6));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"7"), @(kVK_ANSI_7));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"8"), @(kVK_ANSI_8));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"9"), @(kVK_ANSI_9));
+}
 
-  it(@"should convert named key bindings to key codes", ^{
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"f1")).to.equal(kVK_F1);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"f2")).to.equal(kVK_F2);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"f3")).to.equal(kVK_F3);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"f4")).to.equal(kVK_F4);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"f5")).to.equal(kVK_F5);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"f6")).to.equal(kVK_F6);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"f7")).to.equal(kVK_F7);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"f8")).to.equal(kVK_F8);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"f9")).to.equal(kVK_F9);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"f10")).to.equal(kVK_F10);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"f11")).to.equal(kVK_F11);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"f12")).to.equal(kVK_F12);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"f13")).to.equal(kVK_F13);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"f14")).to.equal(kVK_F14);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"f15")).to.equal(kVK_F15);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"f16")).to.equal(kVK_F16);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"f17")).to.equal(kVK_F17);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"f18")).to.equal(kVK_F18);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"f19")).to.equal(kVK_F19);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"f20")).to.equal(kVK_F20);
+- (void)testShouldConvertAlphabeticalKeyBindingsWithModifiersToKeyCodes
+{
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"cmd+a"), @(kVK_ANSI_A));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"shift+cmd+b"), @(kVK_ANSI_B));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"alt+shift+cmd+c"), @(kVK_ANSI_C));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"ctrl+alt+shift+cmd+d"), @(kVK_ANSI_D));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"command+e"), @(kVK_ANSI_E));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"shift+command+f"), @(kVK_ANSI_F));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"option+shift+command+g"), @(kVK_ANSI_G));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"control+option+shift+command+h"), @(kVK_ANSI_H));
+}
 
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypaddecimal")).to.equal(kVK_ANSI_KeypadDecimal);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypadmultiply")).to.equal(kVK_ANSI_KeypadMultiply);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypadplus")).to.equal(kVK_ANSI_KeypadPlus);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypadclear")).to.equal(kVK_ANSI_KeypadClear);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypaddivide")).to.equal(kVK_ANSI_KeypadDivide);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypadenter")).to.equal(kVK_ANSI_KeypadEnter);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypadminus")).to.equal(kVK_ANSI_KeypadMinus);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypadequals")).to.equal(kVK_ANSI_KeypadEquals);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypad0")).to.equal(kVK_ANSI_Keypad0);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypad1")).to.equal(kVK_ANSI_Keypad1);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypad2")).to.equal(kVK_ANSI_Keypad2);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypad3")).to.equal(kVK_ANSI_Keypad3);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypad4")).to.equal(kVK_ANSI_Keypad4);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypad5")).to.equal(kVK_ANSI_Keypad5);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypad6")).to.equal(kVK_ANSI_Keypad6);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypad7")).to.equal(kVK_ANSI_Keypad7);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypad8")).to.equal(kVK_ANSI_Keypad8);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypad9")).to.equal(kVK_ANSI_Keypad9);
+- (void)testShouldConvertAlphanumericKeyBindingsWithWhitespaceToKeyCodes
+{
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@" cmd  +   a    "), @(kVK_ANSI_A));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@" shift  +   cmd    +     0      "), @(kVK_ANSI_0));
+}
 
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"return")).to.equal(kVK_Return);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"tab")).to.equal(kVK_Tab);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"space")).to.equal(kVK_Space);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"delete")).to.equal(kVK_Delete);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"escape")).to.equal(kVK_Escape);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"command")).to.equal(kVK_Command);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"shift")).to.equal(kVK_Shift);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"capslock")).to.equal(kVK_CapsLock);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"option")).to.equal(kVK_Option);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"control")).to.equal(kVK_Control);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"rightshift")).to.equal(kVK_RightShift);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"rightoption")).to.equal(kVK_RightOption);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"rightcontrol")).to.equal(kVK_RightControl);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"function")).to.equal(kVK_Function);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"volumeup")).to.equal(kVK_VolumeUp);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"volumedown")).to.equal(kVK_VolumeDown);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"mute")).to.equal(kVK_Mute);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"help")).to.equal(kVK_Help);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"home")).to.equal(kVK_Home);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"pageup")).to.equal(kVK_PageUp);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"forwarddelete")).to.equal(kVK_ForwardDelete);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"end")).to.equal(kVK_End);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"pagedown")).to.equal(kVK_PageDown);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"left")).to.equal(kVK_LeftArrow);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"right")).to.equal(kVK_RightArrow);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"down")).to.equal(kVK_DownArrow);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"up")).to.equal(kVK_UpArrow);
-  });
+- (void)testShouldConvertNamedKeyBindingsToKeyCodes
+{
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"f1"), @(kVK_F1));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"f2"), @(kVK_F2));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"f3"), @(kVK_F3));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"f4"), @(kVK_F4));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"f5"), @(kVK_F5));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"f6"), @(kVK_F6));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"f7"), @(kVK_F7));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"f8"), @(kVK_F8));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"f9"), @(kVK_F9));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"f10"), @(kVK_F10));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"f11"), @(kVK_F11));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"f12"), @(kVK_F12));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"f13"), @(kVK_F13));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"f14"), @(kVK_F14));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"f15"), @(kVK_F15));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"f16"), @(kVK_F16));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"f17"), @(kVK_F17));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"f18"), @(kVK_F18));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"f19"), @(kVK_F19));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"f20"), @(kVK_F20));
 
-  it(@"should convert mixed case named key bindings to key codes", ^{
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"F1")).to.equal(kVK_F1);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"F2")).to.equal(kVK_F2);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"F3")).to.equal(kVK_F3);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"F4")).to.equal(kVK_F4);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"F5")).to.equal(kVK_F5);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"F6")).to.equal(kVK_F6);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"F7")).to.equal(kVK_F7);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"F8")).to.equal(kVK_F8);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"F9")).to.equal(kVK_F9);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"F10")).to.equal(kVK_F10);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"F11")).to.equal(kVK_F11);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"F12")).to.equal(kVK_F12);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"F13")).to.equal(kVK_F13);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"F14")).to.equal(kVK_F14);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"F15")).to.equal(kVK_F15);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"F16")).to.equal(kVK_F16);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"F17")).to.equal(kVK_F17);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"F18")).to.equal(kVK_F18);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"F19")).to.equal(kVK_F19);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"F20")).to.equal(kVK_F20);
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypaddecimal"), @(kVK_ANSI_KeypadDecimal));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypadmultiply"), @(kVK_ANSI_KeypadMultiply));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypadplus"), @(kVK_ANSI_KeypadPlus));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypadclear"), @(kVK_ANSI_KeypadClear));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypaddivide"), @(kVK_ANSI_KeypadDivide));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypadenter"), @(kVK_ANSI_KeypadEnter));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypadminus"), @(kVK_ANSI_KeypadMinus));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypadequals"), @(kVK_ANSI_KeypadEquals));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypad0"), @(kVK_ANSI_Keypad0));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypad1"), @(kVK_ANSI_Keypad1));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypad2"), @(kVK_ANSI_Keypad2));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypad3"), @(kVK_ANSI_Keypad3));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypad4"), @(kVK_ANSI_Keypad4));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypad5"), @(kVK_ANSI_Keypad5));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypad6"), @(kVK_ANSI_Keypad6));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypad7"), @(kVK_ANSI_Keypad7));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypad8"), @(kVK_ANSI_Keypad8));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"keypad9"), @(kVK_ANSI_Keypad9));
 
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"KeypadDecimal")).to.equal(kVK_ANSI_KeypadDecimal);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"KeypadMultiply")).to.equal(kVK_ANSI_KeypadMultiply);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"KeypadPlus")).to.equal(kVK_ANSI_KeypadPlus);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"KeypadClear")).to.equal(kVK_ANSI_KeypadClear);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"KeypadDivide")).to.equal(kVK_ANSI_KeypadDivide);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"KeypadEnter")).to.equal(kVK_ANSI_KeypadEnter);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"KeypadMinus")).to.equal(kVK_ANSI_KeypadMinus);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"KeypadEquals")).to.equal(kVK_ANSI_KeypadEquals);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Keypad0")).to.equal(kVK_ANSI_Keypad0);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Keypad1")).to.equal(kVK_ANSI_Keypad1);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Keypad2")).to.equal(kVK_ANSI_Keypad2);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Keypad3")).to.equal(kVK_ANSI_Keypad3);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Keypad4")).to.equal(kVK_ANSI_Keypad4);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Keypad5")).to.equal(kVK_ANSI_Keypad5);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Keypad6")).to.equal(kVK_ANSI_Keypad6);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Keypad7")).to.equal(kVK_ANSI_Keypad7);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Keypad8")).to.equal(kVK_ANSI_Keypad8);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Keypad9")).to.equal(kVK_ANSI_Keypad9);
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"return"), @(kVK_Return));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"tab"), @(kVK_Tab));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"space"), @(kVK_Space));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"delete"), @(kVK_Delete));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"escape"), @(kVK_Escape));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"command"), @(kVK_Command));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"shift"), @(kVK_Shift));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"capslock"), @(kVK_CapsLock));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"option"), @(kVK_Option));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"control"), @(kVK_Control));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"rightshift"), @(kVK_RightShift));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"rightoption"), @(kVK_RightOption));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"rightcontrol"), @(kVK_RightControl));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"function"), @(kVK_Function));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"volumeup"), @(kVK_VolumeUp));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"volumedown"), @(kVK_VolumeDown));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"mute"), @(kVK_Mute));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"help"), @(kVK_Help));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"home"), @(kVK_Home));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"pageup"), @(kVK_PageUp));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"forwarddelete"), @(kVK_ForwardDelete));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"end"), @(kVK_End));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"pagedown"), @(kVK_PageDown));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"left"), @(kVK_LeftArrow));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"right"), @(kVK_RightArrow));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"down"), @(kVK_DownArrow));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"up"), @(kVK_UpArrow));
+}
 
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Return")).to.equal(kVK_Return);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Tab")).to.equal(kVK_Tab);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Space")).to.equal(kVK_Space);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Delete")).to.equal(kVK_Delete);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Escape")).to.equal(kVK_Escape);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Command")).to.equal(kVK_Command);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Shift")).to.equal(kVK_Shift);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"CapsLock")).to.equal(kVK_CapsLock);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Option")).to.equal(kVK_Option);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Control")).to.equal(kVK_Control);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"RightShift")).to.equal(kVK_RightShift);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"RightOption")).to.equal(kVK_RightOption);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"RightControl")).to.equal(kVK_RightControl);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Function")).to.equal(kVK_Function);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"VolumeUp")).to.equal(kVK_VolumeUp);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"VolumeDown")).to.equal(kVK_VolumeDown);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Mute")).to.equal(kVK_Mute);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Help")).to.equal(kVK_Help);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Home")).to.equal(kVK_Home);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"PageUp")).to.equal(kVK_PageUp);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"ForwardDelete")).to.equal(kVK_ForwardDelete);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"End")).to.equal(kVK_End);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"PageDown")).to.equal(kVK_PageDown);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Left")).to.equal(kVK_LeftArrow);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Right")).to.equal(kVK_RightArrow);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Down")).to.equal(kVK_DownArrow);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"Up")).to.equal(kVK_UpArrow);
-  });
+- (void)testShouldConvertMixedCaseNamedKeyBindingsToKeyCodes
+{
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"F1"), @(kVK_F1));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"F2"), @(kVK_F2));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"F3"), @(kVK_F3));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"F4"), @(kVK_F4));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"F5"), @(kVK_F5));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"F6"), @(kVK_F6));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"F7"), @(kVK_F7));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"F8"), @(kVK_F8));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"F9"), @(kVK_F9));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"F10"), @(kVK_F10));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"F11"), @(kVK_F11));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"F12"), @(kVK_F12));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"F13"), @(kVK_F13));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"F14"), @(kVK_F14));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"F15"), @(kVK_F15));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"F16"), @(kVK_F16));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"F17"), @(kVK_F17));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"F18"), @(kVK_F18));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"F19"), @(kVK_F19));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"F20"), @(kVK_F20));
 
-  it(@"should convert named key bindings with modifiers to key codes", ^{
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"cmd+up")).to.equal(kVK_UpArrow);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"shift+cmd+down")).to.equal(kVK_DownArrow);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"alt+shift+cmd+left")).to.equal(kVK_LeftArrow);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"ctrl+alt+shift+cmd+right")).to.equal(kVK_RightArrow);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"command+space")).to.equal(kVK_Space);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"shift+command+f1")).to.equal(kVK_F1);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"option+shift+command+keypad0")).to.equal(kVK_ANSI_Keypad0);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"control+option+shift+command+escape")).to.equal(kVK_Escape);
-  });
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"KeypadDecimal"), @(kVK_ANSI_KeypadDecimal));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"KeypadMultiply"), @(kVK_ANSI_KeypadMultiply));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"KeypadPlus"), @(kVK_ANSI_KeypadPlus));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"KeypadClear"), @(kVK_ANSI_KeypadClear));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"KeypadDivide"), @(kVK_ANSI_KeypadDivide));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"KeypadEnter"), @(kVK_ANSI_KeypadEnter));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"KeypadMinus"), @(kVK_ANSI_KeypadMinus));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"KeypadEquals"), @(kVK_ANSI_KeypadEquals));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Keypad0"), @(kVK_ANSI_Keypad0));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Keypad1"), @(kVK_ANSI_Keypad1));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Keypad2"), @(kVK_ANSI_Keypad2));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Keypad3"), @(kVK_ANSI_Keypad3));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Keypad4"), @(kVK_ANSI_Keypad4));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Keypad5"), @(kVK_ANSI_Keypad5));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Keypad6"), @(kVK_ANSI_Keypad6));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Keypad7"), @(kVK_ANSI_Keypad7));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Keypad8"), @(kVK_ANSI_Keypad8));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Keypad9"), @(kVK_ANSI_Keypad9));
 
-  it(@"should convert mixed case named key bindings with modifiers to key codes", ^{
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"cmd+Up")).to.equal(kVK_UpArrow);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"shift+cmd+Down")).to.equal(kVK_DownArrow);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"alt+shift+cmd+left")).to.equal(kVK_LeftArrow);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"ctrl+alt+shift+cmd+Right")).to.equal(kVK_RightArrow);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"command+SPACE")).to.equal(kVK_Space);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"shift+command+F1")).to.equal(kVK_F1);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"option+shift+command+KEYPAD0")).to.equal(kVK_ANSI_Keypad0);
-    expect(SpectacleConvertShortcutKeyBindingToKeyCode(@"control+option+shift+command+ESCAPE")).to.equal(kVK_Escape);
-  });
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Return"), @(kVK_Return));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Tab"), @(kVK_Tab));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Space"), @(kVK_Space));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Delete"), @(kVK_Delete));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Escape"), @(kVK_Escape));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Command"), @(kVK_Command));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Shift"), @(kVK_Shift));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"CapsLock"), @(kVK_CapsLock));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Option"), @(kVK_Option));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Control"), @(kVK_Control));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"RightShift"), @(kVK_RightShift));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"RightOption"), @(kVK_RightOption));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"RightControl"), @(kVK_RightControl));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Function"), @(kVK_Function));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"VolumeUp"), @(kVK_VolumeUp));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"VolumeDown"), @(kVK_VolumeDown));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Mute"), @(kVK_Mute));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Help"), @(kVK_Help));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Home"), @(kVK_Home));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"PageUp"), @(kVK_PageUp));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"ForwardDelete"), @(kVK_ForwardDelete));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"End"), @(kVK_End));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"PageDown"), @(kVK_PageDown));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Left"), @(kVK_LeftArrow));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Right"), @(kVK_RightArrow));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Down"), @(kVK_DownArrow));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"Up"), @(kVK_UpArrow));
+}
 
-  it(@"should convert empty shortcuts to nil key bindings", ^{
-    expect(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(nil))).to.equal(nil);
-  });
+- (void)testShouldConvertNamedKeyBindingsWithModifiersToKeyCodes
+{
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"cmd+up"), @(kVK_UpArrow));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"shift+cmd+down"), @(kVK_DownArrow));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"alt+shift+cmd+left"), @(kVK_LeftArrow));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"ctrl+alt+shift+cmd+right"), @(kVK_RightArrow));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"command+space"), @(kVK_Space));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"shift+command+f1"), @(kVK_F1));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"option+shift+command+keypad0"), @(kVK_ANSI_Keypad0));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"control+option+shift+command+escape"), @(kVK_Escape));
+}
 
-  it(@"should convert shortcuts to key bindings", ^{
-    expect(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"alt+cmd+c"))).to.equal(@"alt+cmd+c");
-    expect(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"alt+cmd+f"))).to.equal(@"alt+cmd+f");
-    expect(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"alt+cmd+left"))).to.equal(@"alt+cmd+left");
-    expect(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"alt+cmd+right"))).to.equal(@"alt+cmd+right");
-    expect(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"alt+cmd+up"))).to.equal(@"alt+cmd+up");
-    expect(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"alt+cmd+down"))).to.equal(@"alt+cmd+down");
-    expect(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"ctrl+cmd+left"))).to.equal(@"ctrl+cmd+left");
-    expect(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"ctrl+shift+cmd+left"))).to.equal(@"ctrl+shift+cmd+left");
-    expect(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"ctrl+cmd+right"))).to.equal(@"ctrl+cmd+right");
-    expect(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"ctrl+shift+cmd+right"))).to.equal(@"ctrl+shift+cmd+right");
-    expect(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"ctrl+alt+cmd+right"))).to.equal(@"ctrl+alt+cmd+right");
-    expect(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"ctrl+alt+cmd+left"))).to.equal(@"ctrl+alt+cmd+left");
-    expect(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"ctrl+alt+right"))).to.equal(@"ctrl+alt+right");
-    expect(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"ctrl+alt+left"))).to.equal(@"ctrl+alt+left");
-    expect(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"ctrl+alt+shift+right"))).to.equal(@"ctrl+alt+shift+right");
-    expect(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"ctrl+alt+shift+left"))).to.equal(@"ctrl+alt+shift+left");
-    expect(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"alt+cmd+z"))).to.equal(@"alt+cmd+z");
-    expect(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"alt+shift+cmd+z"))).to.equal(@"alt+shift+cmd+z");
-  });
-});
-SpecEnd
+- (void)testShouldConvertMixedCaseNamedKeyBindingsWithModifiersToKeyCodes
+{
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"cmd+Up"), @(kVK_UpArrow));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"shift+cmd+Down"), @(kVK_DownArrow));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"alt+shift+cmd+left"), @(kVK_LeftArrow));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"ctrl+alt+shift+cmd+Right"), @(kVK_RightArrow));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"command+SPACE"), @(kVK_Space));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"shift+command+F1"), @(kVK_F1));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"option+shift+command+KEYPAD0"), @(kVK_ANSI_Keypad0));
+  XCTAssertEqualObjects(SpectacleConvertShortcutKeyBindingToKeyCode(@"control+option+shift+command+ESCAPE"), @(kVK_Escape));
+}
+
+- (void)testShouldConvertEmptyShortcutsToNilKeyBindings
+{
+  XCTAssertNil(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(nil)));
+}
+
+- (void)testShouldConvertShortcutsToKeyBindings
+{
+  XCTAssertEqualObjects(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"alt+cmd+c")), @"alt+cmd+c");
+  XCTAssertEqualObjects(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"alt+cmd+f")), @"alt+cmd+f");
+  XCTAssertEqualObjects(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"alt+cmd+left")), @"alt+cmd+left");
+  XCTAssertEqualObjects(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"alt+cmd+right")), @"alt+cmd+right");
+  XCTAssertEqualObjects(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"alt+cmd+up")), @"alt+cmd+up");
+  XCTAssertEqualObjects(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"alt+cmd+down")), @"alt+cmd+down");
+  XCTAssertEqualObjects(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"ctrl+cmd+left")), @"ctrl+cmd+left");
+  XCTAssertEqualObjects(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"ctrl+shift+cmd+left")), @"ctrl+shift+cmd+left");
+  XCTAssertEqualObjects(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"ctrl+cmd+right")), @"ctrl+cmd+right");
+  XCTAssertEqualObjects(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"ctrl+shift+cmd+right")), @"ctrl+shift+cmd+right");
+  XCTAssertEqualObjects(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"ctrl+alt+cmd+right")), @"ctrl+alt+cmd+right");
+  XCTAssertEqualObjects(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"ctrl+alt+cmd+left")), @"ctrl+alt+cmd+left");
+  XCTAssertEqualObjects(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"ctrl+alt+right")), @"ctrl+alt+right");
+  XCTAssertEqualObjects(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"ctrl+alt+left")), @"ctrl+alt+left");
+  XCTAssertEqualObjects(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"ctrl+alt+shift+right")), @"ctrl+alt+shift+right");
+  XCTAssertEqualObjects(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"ctrl+alt+shift+left")), @"ctrl+alt+shift+left");
+  XCTAssertEqualObjects(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"alt+cmd+z")), @"alt+cmd+z");
+  XCTAssertEqualObjects(SpectacleConvertShortcutToKeyBinding(shortcutForKeyBinding(@"alt+shift+cmd+z")), @"alt+shift+cmd+z");
+}
+
+@end
 
 static SpectacleShortcut *shortcutForKeyBinding(NSString *keyBinding)
 {

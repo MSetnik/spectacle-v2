@@ -1,20 +1,30 @@
-# Spectacle
+# Spectacle v2
 
-[![Build Status](https://travis-ci.org/eczarny/spectacle.svg?branch=master)](https://travis-ci.org/eczarny/spectacle)
+[![Build and test](https://github.com/MSetnik/spectacle-v2/actions/workflows/build.yml/badge.svg)](https://github.com/MSetnik/spectacle-v2/actions/workflows/build.yml)
 
 Easily organize windows without using a mouse.
 
-## Important Note
-
-**This project is not being actively maintained.** Unfortunately, after almost a decade of on-and-off development I can no longer dedicate the time needed to be a responsible maintainer of this project. Spectacle will remain available for download but please use at your own risk. The source code will continue to be free and open to anyone, so feel free to make Spectacle your own.
-
-Thanks to all the folks that have made Spectacle the first app they install a new Mac!
-
-_Spectacle users have recommended [Rectangle](https://github.com/rxhanson/Rectangle) as an open source alternative._
+This fork of [Eric Czarny's Spectacle](https://github.com/eczarny/spectacle) adds native Apple silicon support. Release builds contain both `arm64` and `x86_64` code, so M-series Macs run without Rosetta and Intel Macs use the same application.
 
 ## System requirements
 
-Spectacle [0.8.6][1] is the last version to support Mac OS X 10.7; future releases will only support 10.9 or greater. Folks wishing to stay on 10.7 should download [0.8.6][1]. Those looking for a version of Spectacle that supports 10.6 can still download [0.7][2].
+- macOS 12 Monterey or later.
+- An Apple silicon or Intel Mac.
+- Accessibility permission to move other applications' windows.
+
+The original project is no longer maintained. Its historical downloads are Intel-only; use a build from this fork. Apple's [Rosetta support notice](https://support.apple.com/en-us/102527) explains why native Apple silicon builds are needed.
+
+## Installing a local build
+
+1. Build with `./scripts/build.sh` (see below), or extract this fork's `Spectacle-universal.zip` artifact.
+2. Quit any running copy of Spectacle, then copy the new `Spectacle.app` into Applications.
+3. Open the app and grant access in **System Settings → Privacy & Security → Accessibility**. If an old entry no longer works after replacing the app, remove that entry and add the new copy.
+
+The original bundle identifier and shortcut storage location are preserved, so existing settings can be reused. Keep only one copy running to avoid competing global shortcuts.
+
+Local and CI builds are **ad-hoc signed, not Developer ID signed or notarized**. Downloaded artifacts may require approval in System Settings → Privacy & Security. Public distribution with a verified developer identity requires separate Developer ID signing and Apple notarization.
+
+“Check for Updates…” opens [this fork's releases](https://github.com/MSetnik/spectacle-v2/releases). Automatic updates from the original project's feed have been removed along with its obsolete Sparkle framework. This fork does not install updates automatically.
 
 ## Keyboard Shortcuts
 
@@ -85,15 +95,30 @@ Most applications built with the Cocoa frameworks can be readily manipulated via
 
 ## Building and running
 
-Spectacle uses [Carthage][5]. Before building Spectacle in Xcode run:
+Install Xcode with the macOS SDK and select it with `xcode-select`. No Carthage, Homebrew, or third-party frameworks are required.
 
-    $ carthage bootstrap --platform Mac
+```sh
+./scripts/build.sh
+```
 
-Once Carthage builds Spectacle's dependencies open the Xcode project:
+The script builds Release for **both** architectures, checks every bundled Mach-O binary with `lipo`, verifies the code signature, and produces:
 
-    $ open Spectacle.xcodeproj
+- `build/DerivedData/Build/Products/Release/Spectacle.app`
+- `build/dist/Spectacle-universal.zip`
 
-After Xcode finishes loading the workspace press &#8984;R to run Spectacle.
+You can also open `Spectacle.xcodeproj` and run the Spectacle scheme. Debug uses the selected Mac's architecture; Release builds both architectures. Version and build numbers are set using `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in the project, so builds also work from source archives and shallow clones.
+
+### Tests
+
+```sh
+./scripts/test.sh
+```
+
+The existing window geometry, shortcut parsing, and keyboard translation tests use Apple's XCTest framework. Window manager tests use typed test doubles instead of downloaded mocking frameworks. The test host skips normal startup to avoid registering shortcuts, changing preferences, or requesting Accessibility permission.
+
+Tests run natively on the current Mac. On an Apple silicon Mac with Rosetta installed, the Intel tests can additionally be run with `SPECTACLE_TEST_ARCH=x86_64 ./scripts/test.sh`; Rosetta is **not** needed for the native app or ARM tests. Keyboard translation tests expect an English/US keyboard layout.
+
+GitHub Actions runs the tests on Apple silicon and Intel runners and verifies universal Release artifacts. A successful build proves architecture support; manually check global shortcuts, Accessibility access, multiple displays, and launch at login on each macOS version you support. Legacy launch-at-login and shortcut migration APIs remain in use and produce deprecation warnings on recent SDKs.
 
 # License
 
@@ -105,4 +130,3 @@ Spectacle should be accompanied by a LICENSE file containing the license relevan
 [2]: https://s3.amazonaws.com/spectacle/downloads/Spectacle+0.7.zip
 [3]: http://support.apple.com/kb/ht1343
 [4]: https://developer.apple.com/library/mac/documentation/Accessibility/Conceptual/AccessibilityMacOSX/OSXAXmodel.html
-[5]: https://github.com/Carthage/Carthage

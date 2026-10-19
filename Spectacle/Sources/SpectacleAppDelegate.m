@@ -1,7 +1,5 @@
 #import "SpectacleAppDelegate.h"
 
-#import <Sparkle/Sparkle.h>
-
 #import "SpectacleAccessibilityElement.h"
 #import "SpectacleDefaultShortcutHelpers.h"
 #import "SpectacleMigratingShortcutStorage.h"
@@ -31,6 +29,10 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
+  // Unit tests exercise the window logic without registering global shortcuts or prompting for access.
+  if (NSClassFromString(@"XCTestCase")) {
+    return;
+  }
   NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
   NSNotificationCenter *workspaceNotificationCenter = [NSWorkspace sharedWorkspace].notificationCenter;
   [notificationCenter addObserver:self
@@ -108,12 +110,10 @@
   _shortcutsAreDisabledForAnHour = NO;
   [self manageShortcuts];
   [self disableShortcutsIfFrontmostApplicationIsBlacklistedOrDisabled];
-  BOOL automaticallyChecksForUpdates = [userDefaults boolForKey:@"AutomaticUpdateCheckEnabled"];
   BOOL statusItemEnabled = [userDefaults boolForKey:@"StatusItemEnabled"];
   if (statusItemEnabled) {
     [self enableStatusItem];
   }
-  [[SUUpdater sharedUpdater] setAutomaticallyChecksForUpdates:automaticallyChecksForUpdates];
   [self updateShortcutMenuItems];
   if (!AXIsProcessTrustedWithOptions(NULL)) {
     [[NSApplication sharedApplication] runModalForWindow:self.accessiblityAccessDialogWindow];
@@ -125,6 +125,11 @@
   [self showPreferencesWindow:self];
 
   return YES;
+}
+
+- (IBAction)checkForUpdates:(id)sender
+{
+  [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://github.com/MSetnik/spectacle-v2/releases"]];
 }
 
 - (IBAction)showPreferencesWindow:(id)sender
@@ -276,14 +281,10 @@
 
 - (IBAction)openSystemPreferences:(id)sender
 {
-  NSURL *preferencePaneURL = [NSURL fileURLWithPath:[SpectacleUtilities pathForPreferencePaneNamed:@"Security"]];
-  NSBundle *applicationBundle = NSBundle.mainBundle;
-  NSURL *scriptURL = [applicationBundle URLForResource:@"Security & Privacy System Preferences" withExtension:@"scpt"];
   [[NSApplication sharedApplication] stopModal];
   [self.accessiblityAccessDialogWindow orderOut:self];
-  if (![[[NSAppleScript alloc] initWithContentsOfURL:scriptURL error:nil] executeAndReturnError:nil]) {
-    [[NSWorkspace sharedWorkspace] openURL:preferencePaneURL];
-  }
+  NSURL *accessibilitySettingsURL = [NSURL URLWithString:@"x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"];
+  [[NSWorkspace sharedWorkspace] openURL:accessibilitySettingsURL];
 }
 
 - (void)dealloc
