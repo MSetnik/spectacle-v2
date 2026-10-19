@@ -87,7 +87,7 @@ static NSError *bridgeError(SpectacleShortcutsErrorCode code, NSString *descript
   if ([value isKindOfClass:NSString.class]) value = [value dataUsingEncoding:NSUTF8StringEncoding];
   if ([value isKindOfClass:NSData.class]) value = [NSJSONSerialization JSONObjectWithData:value options:0 error:nil];
   if (![value isKindOfClass:NSDictionary.class]
-      || ![value[@"protocol"] isEqual:@1]
+      || ![value[@"protocol"] isEqual:@2]
       || ![value[@"requestID"] isKindOfClass:NSString.class]
       || ![value[@"requestID"] isEqual:requestID]
       || ![value[@"status"] isKindOfClass:NSString.class]) {

@@ -145,7 +145,7 @@
 				<key>GroupingIdentifier</key>
 				<string>15AD95DD-2CB8-519F-93BF-0CAEED41C64A</string>
 				<key>WFNumberValue</key>
-				<integer>1</integer>
+				<integer>2</integer>
 				<key>UUID</key>
 				<string>001DB2D9-9FE7-511A-812D-EDD733A8C1CC</string>
 				<key>CustomOutputName</key>
@@ -162,7 +162,7 @@
 					<key>Value</key>
 					<dict>
 						<key>string</key>
-						<string>{"protocol":1,"requestID":"￼","status":"incompatible"}</string>
+						<string>{"protocol":2,"requestID":"￼","status":"incompatible"}</string>
 						<key>attachmentsByRange</key>
 						<dict>
 							<key>{27, 1}</key>
@@ -268,7 +268,7 @@
 					<key>Value</key>
 					<dict>
 						<key>string</key>
-						<string>{"protocol":1,"requestID":"￼","status":"ok"}</string>
+						<string>{"protocol":2,"requestID":"￼","status":"ok"}</string>
 						<key>attachmentsByRange</key>
 						<dict>
 							<key>{27, 1}</key>
@@ -366,6 +366,39 @@
 		</dict>
 		<dict>
 			<key>WFWorkflowActionIdentifier</key>
+			<string>is.workflow.actions.conditional</string>
+			<key>WFWorkflowActionParameters</key>
+			<dict>
+				<key>WFInput</key>
+				<dict>
+					<key>Value</key>
+					<dict>
+						<key>Type</key>
+						<string>ActionOutput</string>
+						<key>OutputUUID</key>
+						<string>39053FC0-AFFA-5B8E-A053-E0298EA02061</string>
+						<key>OutputName</key>
+						<string>operation</string>
+					</dict>
+					<key>WFSerializationType</key>
+					<string>WFTextTokenAttachment</string>
+				</dict>
+				<key>WFCondition</key>
+				<integer>5</integer>
+				<key>WFControlFlowMode</key>
+				<integer>0</integer>
+				<key>GroupingIdentifier</key>
+				<string>2D5E0587-93EF-5B6F-B378-A78FA000C7E9</string>
+				<key>WFConditionalActionString</key>
+				<string>resize</string>
+				<key>UUID</key>
+				<string>E073C96D-CFE1-521D-BF8F-38529140A69C</string>
+				<key>CustomOutputName</key>
+				<string>Resize operation guard</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>WFWorkflowActionIdentifier</key>
 			<string>is.workflow.actions.gettext</string>
 			<key>WFWorkflowActionParameters</key>
 			<dict>
@@ -374,7 +407,7 @@
 					<key>Value</key>
 					<dict>
 						<key>string</key>
-						<string>{"protocol":1,"requestID":"￼","status":"invalid"}</string>
+						<string>{"protocol":2,"requestID":"￼","status":"invalid"}</string>
 						<key>attachmentsByRange</key>
 						<dict>
 							<key>{27, 1}</key>
@@ -420,6 +453,21 @@
 				<string>5519D38E-09A6-5F92-98BE-B372E4B06D64</string>
 				<key>CustomOutputName</key>
 				<string>Invalid operation output</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>WFWorkflowActionIdentifier</key>
+			<string>is.workflow.actions.conditional</string>
+			<key>WFWorkflowActionParameters</key>
+			<dict>
+				<key>WFControlFlowMode</key>
+				<integer>2</integer>
+				<key>GroupingIdentifier</key>
+				<string>2D5E0587-93EF-5B6F-B378-A78FA000C7E9</string>
+				<key>UUID</key>
+				<string>A7448F9A-CBC2-5AB9-984D-89C7A5D1498D</string>
+				<key>CustomOutputName</key>
+				<string>Resize operation guard end</string>
 			</dict>
 		</dict>
 		<dict>
@@ -932,7 +980,7 @@
 					<key>Value</key>
 					<dict>
 						<key>string</key>
-						<string>{"protocol":1,"requestID":"￼","status":"target-changed"}</string>
+						<string>{"protocol":2,"requestID":"￼","status":"target-changed"}</string>
 						<key>attachmentsByRange</key>
 						<dict>
 							<key>{27, 1}</key>
@@ -1024,6 +1072,39 @@
 		</dict>
 		<dict>
 			<key>WFWorkflowActionIdentifier</key>
+			<string>is.workflow.actions.conditional</string>
+			<key>WFWorkflowActionParameters</key>
+			<dict>
+				<key>WFInput</key>
+				<dict>
+					<key>Value</key>
+					<dict>
+						<key>Type</key>
+						<string>ActionOutput</string>
+						<key>OutputUUID</key>
+						<string>39053FC0-AFFA-5B8E-A053-E0298EA02061</string>
+						<key>OutputName</key>
+						<string>operation</string>
+					</dict>
+					<key>WFSerializationType</key>
+					<string>WFTextTokenAttachment</string>
+				</dict>
+				<key>WFCondition</key>
+				<integer>4</integer>
+				<key>WFControlFlowMode</key>
+				<integer>0</integer>
+				<key>GroupingIdentifier</key>
+				<string>F8654C2C-CB0D-5238-8F80-A3A6C421F3D3</string>
+				<key>WFConditionalActionString</key>
+				<string>resize</string>
+				<key>UUID</key>
+				<string>D11BC562-DEA2-55B5-8FF4-CAAF0B16B82B</string>
+				<key>CustomOutputName</key>
+				<string>Resize request</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>WFWorkflowActionIdentifier</key>
 			<string>is.workflow.actions.resizewindow</string>
 			<key>WFWorkflowActionParameters</key>
 			<dict>
@@ -1077,6 +1158,79 @@
 				<string>7BEEFC14-BC26-555D-AC88-D8B8041157D5</string>
 				<key>CustomOutputName</key>
 				<string>Resize</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>WFWorkflowActionIdentifier</key>
+			<string>is.workflow.actions.gettext</string>
+			<key>WFWorkflowActionParameters</key>
+			<dict>
+				<key>WFTextActionText</key>
+				<dict>
+					<key>Value</key>
+					<dict>
+						<key>string</key>
+						<string>{"protocol":2,"requestID":"￼","status":"ok"}</string>
+						<key>attachmentsByRange</key>
+						<dict>
+							<key>{27, 1}</key>
+							<dict>
+								<key>Type</key>
+								<string>ActionOutput</string>
+								<key>OutputUUID</key>
+								<string>B6320B93-D3A5-51D6-979A-0539893B71A5</string>
+								<key>OutputName</key>
+								<string>requestID</string>
+							</dict>
+						</dict>
+					</dict>
+					<key>WFSerializationType</key>
+					<string>WFTextTokenString</string>
+				</dict>
+				<key>UUID</key>
+				<string>2ED3BACA-381D-5FAC-A7AE-9C7205242528</string>
+				<key>CustomOutputName</key>
+				<string>Resize completed</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>WFWorkflowActionIdentifier</key>
+			<string>is.workflow.actions.output</string>
+			<key>WFWorkflowActionParameters</key>
+			<dict>
+				<key>WFOutput</key>
+				<dict>
+					<key>Value</key>
+					<dict>
+						<key>Type</key>
+						<string>ActionOutput</string>
+						<key>OutputUUID</key>
+						<string>2ED3BACA-381D-5FAC-A7AE-9C7205242528</string>
+						<key>OutputName</key>
+						<string>Resize completed</string>
+					</dict>
+					<key>WFSerializationType</key>
+					<string>WFTextTokenAttachment</string>
+				</dict>
+				<key>UUID</key>
+				<string>CA325B51-C535-5960-823D-53C022D0C1F3</string>
+				<key>CustomOutputName</key>
+				<string>Resize completed output</string>
+			</dict>
+		</dict>
+		<dict>
+			<key>WFWorkflowActionIdentifier</key>
+			<string>is.workflow.actions.conditional</string>
+			<key>WFWorkflowActionParameters</key>
+			<dict>
+				<key>WFControlFlowMode</key>
+				<integer>2</integer>
+				<key>GroupingIdentifier</key>
+				<string>F8654C2C-CB0D-5238-8F80-A3A6C421F3D3</string>
+				<key>UUID</key>
+				<string>032EFF43-5CAA-5BE9-8D42-F45F21A8F12B</string>
+				<key>CustomOutputName</key>
+				<string>Resize request end</string>
 			</dict>
 		</dict>
 		<dict>
@@ -1138,63 +1292,6 @@
 		</dict>
 		<dict>
 			<key>WFWorkflowActionIdentifier</key>
-			<string>is.workflow.actions.resizewindow</string>
-			<key>WFWorkflowActionParameters</key>
-			<dict>
-				<key>WFWindow</key>
-				<dict>
-					<key>Value</key>
-					<dict>
-						<key>Type</key>
-						<string>ActionOutput</string>
-						<key>OutputUUID</key>
-						<string>63841C44-5AF3-5A25-AD1C-58D3D3E70FEB</string>
-						<key>OutputName</key>
-						<string>Target window</string>
-					</dict>
-					<key>WFSerializationType</key>
-					<string>WFTextTokenAttachment</string>
-				</dict>
-				<key>WFConfiguration</key>
-				<string>Dimensions</string>
-				<key>WFWidth</key>
-				<dict>
-					<key>Value</key>
-					<dict>
-						<key>Type</key>
-						<string>ActionOutput</string>
-						<key>OutputUUID</key>
-						<string>914A135E-9555-503A-93D2-B3CEB6EBFC53</string>
-						<key>OutputName</key>
-						<string>width</string>
-					</dict>
-					<key>WFSerializationType</key>
-					<string>WFTextTokenAttachment</string>
-				</dict>
-				<key>WFHeight</key>
-				<dict>
-					<key>Value</key>
-					<dict>
-						<key>Type</key>
-						<string>ActionOutput</string>
-						<key>OutputUUID</key>
-						<string>81019296-806B-5ED0-908E-DFA39AECB281</string>
-						<key>OutputName</key>
-						<string>height</string>
-					</dict>
-					<key>WFSerializationType</key>
-					<string>WFTextTokenAttachment</string>
-				</dict>
-				<key>WFBringToFront</key>
-				<false/>
-				<key>UUID</key>
-				<string>831486C2-1514-5114-98D7-C74CE617F172</string>
-				<key>CustomOutputName</key>
-				<string>Final size</string>
-			</dict>
-		</dict>
-		<dict>
-			<key>WFWorkflowActionIdentifier</key>
 			<string>is.workflow.actions.gettext</string>
 			<key>WFWorkflowActionParameters</key>
 			<dict>
@@ -1203,7 +1300,7 @@
 					<key>Value</key>
 					<dict>
 						<key>string</key>
-						<string>{"protocol":1,"requestID":"￼","status":"ok"}</string>
+						<string>{"protocol":2,"requestID":"￼","status":"ok"}</string>
 						<key>attachmentsByRange</key>
 						<dict>
 							<key>{27, 1}</key>

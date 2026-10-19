@@ -43,7 +43,7 @@ def generate():
 
     def reply(status, label):
         action("gettext", label,
-               WFTextActionText=text_with_reference('{"protocol":1,"requestID":"', "requestID",
+               WFTextActionText=text_with_reference('{"protocol":2,"requestID":"', "requestID",
                                                    '","status":"' + status + '"}'))
         action("output", label + " output", WFOutput=reference(label))
 
@@ -61,14 +61,16 @@ def generate():
            "A move is allowed only when exactly one visible window matches the captured app and frame.")
     for key in ("requestID", "protocol", "operation"):
         read(key)
-    start_if("Protocol guard", "protocol", 5, WFNumberValue=1)
+    start_if("Protocol guard", "protocol", 5, WFNumberValue=2)
     reply("incompatible", "Incompatible protocol")
     end_if("Protocol guard")
     start_if("Probe", "operation", 4, WFConditionalActionString="probe")
     reply("ok", "Connection verified")
     end_if("Probe")
     start_if("Operation guard", "operation", 5, WFConditionalActionString="move")
+    start_if("Resize operation guard", "operation", 5, WFConditionalActionString="resize")
     reply("invalid", "Invalid operation")
+    end_if("Resize operation guard")
     end_if("Operation guard")
     for key in ("app", "beforeX", "beforeY", "beforeWidth", "beforeHeight", "x", "y", "width", "height"):
         read(key)
@@ -90,12 +92,15 @@ def generate():
     reply("target-changed", "Target changed")
     end_if("Unique window guard")
     action("getitemfromlist", "Target window", WFInput=reference("Matching windows"), WFItemSpecifier="First Item")
+    # Exactly one geometry mutation per invocation; the app waits for settled bounds
+    # before the next call, avoiding stale-height calculations inside Shortcuts.
+    start_if("Resize request", "operation", 4, WFConditionalActionString="resize")
     action("resizewindow", "Resize", WFWindow=reference("Target window"), WFConfiguration="Dimensions",
            WFWidth=reference("width"), WFHeight=reference("height"), WFBringToFront=False)
+    reply("ok", "Resize completed")
+    end_if("Resize request")
     action("movewindow", "Move", WFWindow=reference("Target window"), WFPosition="Coordinates",
            WFXCoordinate=reference("x"), WFYCoordinate=reference("y"), WFBringToFront=False)
-    action("resizewindow", "Final size", WFWindow=reference("Target window"), WFConfiguration="Dimensions",
-           WFWidth=reference("width"), WFHeight=reference("height"), WFBringToFront=False)
     reply("ok", "Move completed")
     return {"WFWorkflowName": NAME, "WFWorkflowClientVersion": "2600",
             "WFWorkflowMinimumClientVersion": 900, "WFWorkflowMinimumClientVersionString": "900",

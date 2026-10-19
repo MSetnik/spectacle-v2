@@ -54,4 +54,6 @@ assert {p["Property"] for p in predicates["WFActionParameterFilterTemplates"]} =
 }
 names = [a["WFWorkflowActionParameters"]["CustomOutputName"] for a in actions]
 assert names.index("Unique window guard end") < names.index("Resize") < names.index("Move")
+assert names.index("Resize") < names.index("Resize completed output") < names.index("Resize request end") < names.index("Move")
+assert names.count("Resize") == 1 and "Final size" not in names
 print(f"Companion source verified: {len(actions)} built-in actions; no scripts or network actions.")

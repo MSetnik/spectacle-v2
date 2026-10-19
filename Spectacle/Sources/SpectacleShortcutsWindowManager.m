@@ -95,31 +95,79 @@ static NSError *windowError(NSString *message)
     [self runNextCommand];
     return;
   }
+  _busy = YES;
+  [self runStage:0 action:action before:current current:current target:target history:history];
+}
+
+- (void)scheduleGeometryCheck:(dispatch_block_t)check
+{
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 50 * NSEC_PER_MSEC), dispatch_get_main_queue(), check);
+}
+
+- (void)awaitStableSnapshot:(SpectacleWindowSnapshot *)before previousFrame:(CGRect)previous
+                  attempts:(NSUInteger)attempts stableSamples:(NSUInteger)stableSamples
+                completion:(void (^)(SpectacleWindowSnapshot *, NSError *))completion
+{
+  [self scheduleGeometryCheck:^{
+    SpectacleWindowSnapshot *after = self->_refreshProvider(before);
+    if (!after) { completion(nil, windowError(@"The window closed or is no longer visible.")); return; }
+    NSUInteger stable = CGRectEqualToRect(previous, after.frame) ? stableSamples + 1 : 0;
+    // Acknowledgement can precede animation. Require 150 ms of unchanged geometry;
+    // allow 500 ms for a delayed start or an app refusing a size change.
+    if (stable >= 3 && (!CGRectEqualToRect(before.frame, after.frame) || attempts >= 9)) {
+      completion(after, nil);
+    } else if (attempts >= 39) {
+      completion(after, windowError(@"The window kept changing during the request. Pending commands were cancelled."));
+    } else {
+      [self awaitStableSnapshot:before previousFrame:after.frame attempts:attempts + 1
+                  stableSamples:stable completion:completion];
+    }
+  }];
+}
+
+- (void)runStage:(NSUInteger)stage action:(SpectacleWindowAction *)action
+          before:(SpectacleWindowSnapshot *)before current:(SpectacleWindowSnapshot *)current
+          target:(CGRect)target history:(SpectacleShortcutsHistory *)history
+{
+  // A second size/position pass accommodates constraints on the source display.
+  // Every stage re-finds the same window using freshly observed, settled bounds.
+  if (stage == 4) { [self finishCommand:action before:before after:current history:history error:nil]; return; }
+  BOOL resize = stage % 2 == 0;
+  BOOL alreadyApplied = resize ? CGSizeEqualToSize(current.frame.size, target.size)
+                               : CGPointEqualToPoint(current.frame.origin, target.origin);
+  if (alreadyApplied) {
+    [self runStage:stage + 1 action:action before:before current:current target:target history:history];
+    return;
+  }
+  if (![_snapshotProvider().identity isEqual:before.identity]) {
+    [self finishCommand:action before:before after:current history:history
+                 error:windowError(@"Focus changed before the window operation finished. Pending commands were cancelled.")];
+    return;
+  }
   NSDictionary *request = @{
-    @"protocol":@1, @"requestID":NSUUID.UUID.UUIDString, @"operation":@"move",
+    @"protocol":@2, @"requestID":NSUUID.UUID.UUIDString, @"operation":resize ? @"resize" : @"move",
     @"app":current.appName,
     @"beforeX":@(current.frame.origin.x), @"beforeY":@(current.frame.origin.y),
     @"beforeWidth":@(current.frame.size.width), @"beforeHeight":@(current.frame.size.height),
     @"x":@(target.origin.x), @"y":@(target.origin.y),
     @"width":@(target.size.width), @"height":@(target.size.height)
   };
-  _busy = YES;
   [_transport executeRequest:request completion:^(NSDictionary *response, NSError *error) {
-    [self finishCommand:action snapshot:current history:history error:error attempt:0];
+    [self awaitStableSnapshot:current previousFrame:current.frame attempts:0 stableSamples:0
+                  completion:^(SpectacleWindowSnapshot *after, NSError *settlingError) {
+      NSError *failure = error ?: settlingError;
+      if (failure) {
+        [self finishCommand:action before:before after:after history:history error:failure];
+      } else {
+        [self runStage:stage + 1 action:action before:before current:after target:target history:history];
+      }
+    }];
   }];
 }
 
-- (void)finishCommand:(SpectacleWindowAction *)action snapshot:(SpectacleWindowSnapshot *)before
-              history:(SpectacleShortcutsHistory *)history error:(NSError *)error attempt:(NSUInteger)attempt
+- (void)finishCommand:(SpectacleWindowAction *)action before:(SpectacleWindowSnapshot *)before
+                after:(SpectacleWindowSnapshot *)after history:(SpectacleShortcutsHistory *)history error:(NSError *)error
 {
-  SpectacleWindowSnapshot *after = _refreshProvider(before);
-  // Window Server geometry may lag completion of the automation by a few frames.
-  if (!error && after && CGRectEqualToRect(before.frame, after.frame) && attempt < 5) {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 100 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
-      [self finishCommand:action snapshot:before history:history error:nil attempt:attempt + 1];
-    });
-    return;
-  }
   if (after && !CGRectEqualToRect(before.frame, after.frame)) {
     // Preserve an undo path even if Shortcuts failed after a partial resize.
     [history recordAction:error ? kSpectacleWindowActionNone : action before:before.frame after:after.frame];
@@ -203,7 +251,7 @@ static NSError *windowError(NSString *message)
     }
   } else if (choice == NSAlertSecondButtonReturn) {
     _busy = YES;
-    NSDictionary *request = @{@"protocol":@1, @"requestID":NSUUID.UUID.UUIDString, @"operation":@"probe"};
+    NSDictionary *request = @{@"protocol":@2, @"requestID":NSUUID.UUID.UUIDString, @"operation":@"probe"};
     [_transport executeRequest:request completion:^(NSDictionary *response, NSError *error) {
       self->_busy = NO;
       [self->_pending removeAllObjects];

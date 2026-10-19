@@ -32,8 +32,8 @@ This conclusion is based on documentation and source inspection. We have not sub
 | Area | Status |
 | --- | --- |
 | Apple silicon | Release binary contains `arm64` and `x86_64`; the local Release process was observed running as ARM64 on macOS 27.0.1. |
-| Automated tests | 116 local XCTest cases passed on ARM64, including 15 Shortcuts backend tests. The earlier native baseline's [ARM and Intel CI jobs](https://github.com/MSetnik/spectacle-v2/actions/runs/39259863547) passed; those results do not validate the new backend. CI now also builds and verifies the Store configuration. |
-| Actual window control | Unit coverage is in place. The companion signing request failed with 504/502 errors; import and real-window tests are outstanding. |
+| Automated tests | 120 local XCTest cases passed on ARM64, including 19 Shortcuts backend tests. The previous backend's [ARM and Intel CI jobs](https://github.com/MSetnik/spectacle-v2/actions/runs/39266692699) passed. CI builds and verifies both direct and Store configurations. |
+| Actual window control | Local native Shortcuts actions successfully moved/resized an isolated fixture and exposed a sequencing race. Protocol 2 now waits for observed stable bounds between resize/move calls. Full generated-companion integration remains unverified because signing returned 500/502/504 errors; see [the exact test record](SHORTCUTS_BACKEND.md). |
 | Signing | Ad-hoc signing only; no developer team or App Store provisioning is configured. |
 | Sandbox | Enabled and verified in the Store signature, using the documented Shortcuts scripting group. The Store binary excludes direct AX movers and has no temporary exception or debug entitlement. |
 | Bundle identity | Direct builds retain `com.divisiblebyzero.Spectacle`; Store builds use provisional `io.github.msetnik.Spectacle` with a separate settings container. Developer-team ownership/availability remains unchecked. |

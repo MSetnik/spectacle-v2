@@ -92,6 +92,6 @@ The current fork targets macOS 12. Shortcuts debuted there, but that does not pr
 
 ## Delivery status
 
-Research and the revised plan are complete. The sandboxed Spectacle backend and unsigned companion source are implemented, with 116 passing local tests and universal builds. The user approved Apple validation, but the signing command returned 504/502 errors. Companion import, real movement, latency measurements, and manual acceptance tests remain outstanding. See [implementation status](SHORTCUTS_BACKEND.md) and [readiness](APP_STORE_READINESS.md).
+Research and the revised plan are complete. The sandboxed Spectacle backend and unsigned companion source are implemented, with 120 passing local tests and universal builds. Local native Shortcuts actions moved and resized an isolated test window; they exposed a sequencing issue addressed by protocol 2 and settled-frame checks. Apple validation returned 500/502/504 errors. Generated-companion import, full integration, latency measurements, and remaining manual acceptance tests are outstanding. See [implementation status](SHORTCUTS_BACKEND.md) and [readiness](APP_STORE_READINESS.md).
 
 After the prototype, complete Store identity, signing/provisioning, settings migration, login-item modernization, metadata, privacy disclosures, credits, and review instructions. Contacting Apple support is not an outstanding task.
