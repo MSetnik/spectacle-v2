@@ -1,6 +1,5 @@
 #import "SpectacleAppDelegate.h"
 
-#import "SpectacleAccessibilityElement.h"
 #import "SpectacleDefaultShortcutHelpers.h"
 #import "SpectacleMigratingShortcutStorage.h"
 #import "SpectaclePreferencesController.h"
@@ -11,7 +10,12 @@
 #import "SpectacleShortcutUserDefaultsStorage.h"
 #import "SpectacleUtilities.h"
 #import "SpectacleWindowPositionCalculator.h"
+#import "SpectacleWindowActionPerformer.h"
+#if SPECTACLE_STORE
+#import "SpectacleShortcutsWindowManager.h"
+#else
 #import "SpectacleWindowPositionManager.h"
+#endif
 
 @implementation SpectacleAppDelegate
 {
@@ -19,7 +23,7 @@
   NSStatusItem *_statusItem;
   id<SpectacleShortcutStorage> _shortcutStorage;
   SpectacleShortcutManager *_shortcutManager;
-  SpectacleWindowPositionManager *_windowPositionManager;
+  id<SpectacleWindowActionPerformer> _windowPositionManager;
   SpectaclePreferencesController *_preferencesController;
   NSTimer *_disableShortcutsForAnHourTimer;
   NSSet<NSString *> *_blacklistedApplications;
@@ -101,9 +105,13 @@
     alert.informativeText = errorMessage;
     [alert runModal];
   }];
+#if SPECTACLE_STORE
+  _windowPositionManager = [[SpectacleShortcutsWindowManager alloc] initWithCalculator:windowPositionCalculator];
+#else
   _windowPositionManager = [[SpectacleWindowPositionManager alloc] initWithScreenDetector:[SpectacleScreenDetector new]
                                                                  windowPositionCalculator:windowPositionCalculator
                                                                           sharedWorkspace:[NSWorkspace sharedWorkspace]];
+#endif
   _preferencesController = [[SpectaclePreferencesController alloc] initWithShortcutManager:_shortcutManager
                                                                      windowPositionManager:_windowPositionManager
                                                                            shortcutStorage:_shortcutStorage];
@@ -115,9 +123,21 @@
     [self enableStatusItem];
   }
   [self updateShortcutMenuItems];
+#if SPECTACLE_STORE
+  for (NSMenuItem *item in _statusItemMenu.itemArray) {
+    if (item.action == @selector(checkForUpdates:)) {
+      item.title = @"Set Up Window Control…";
+      item.tag = 0;
+    }
+  }
+  if (![userDefaults boolForKey:@"ShortcutsBridgeVerified"]) {
+    [(SpectacleShortcutsWindowManager *)_windowPositionManager showSetup];
+  }
+#else
   if (!AXIsProcessTrustedWithOptions(NULL)) {
     [[NSApplication sharedApplication] runModalForWindow:self.accessiblityAccessDialogWindow];
   }
+#endif
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)application hasVisibleWindows:(BOOL)visibleWindows
@@ -129,7 +149,11 @@
 
 - (IBAction)checkForUpdates:(id)sender
 {
+#if SPECTACLE_STORE
+  [(SpectacleShortcutsWindowManager *)_windowPositionManager showSetup];
+#else
   [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://github.com/MSetnik/spectacle-v2/releases"]];
+#endif
 }
 
 - (IBAction)showPreferencesWindow:(id)sender
@@ -139,108 +163,92 @@
 
 - (IBAction)moveFrontmostWindowToFullscreen:(id)sender
 {
-  [_windowPositionManager moveFrontmostWindowElement:[SpectacleAccessibilityElement frontmostWindowElement]
-                                              action:kSpectacleWindowActionFullscreen];
+  [_windowPositionManager performWindowAction:kSpectacleWindowActionFullscreen];
 }
 
 - (IBAction)moveFrontmostWindowToCenter:(id)sender
 {
-  [_windowPositionManager moveFrontmostWindowElement:[SpectacleAccessibilityElement frontmostWindowElement]
-                                              action:kSpectacleWindowActionCenter];
+  [_windowPositionManager performWindowAction:kSpectacleWindowActionCenter];
 }
 
 - (IBAction)moveFrontmostWindowToLeftHalf:(id)sender
 {
-  [_windowPositionManager moveFrontmostWindowElement:[SpectacleAccessibilityElement frontmostWindowElement]
-                                              action:kSpectacleWindowActionLeftHalf];
+  [_windowPositionManager performWindowAction:kSpectacleWindowActionLeftHalf];
 }
 
 - (IBAction)moveFrontmostWindowToRightHalf:(id)sender
 {
-  [_windowPositionManager moveFrontmostWindowElement:[SpectacleAccessibilityElement frontmostWindowElement]
-                                              action:kSpectacleWindowActionRightHalf];
+  [_windowPositionManager performWindowAction:kSpectacleWindowActionRightHalf];
 }
 
 - (IBAction)moveFrontmostWindowToTopHalf:(id)sender
 {
-  [_windowPositionManager moveFrontmostWindowElement:[SpectacleAccessibilityElement frontmostWindowElement]
-                                              action:kSpectacleWindowActionTopHalf];
+  [_windowPositionManager performWindowAction:kSpectacleWindowActionTopHalf];
 }
 
 - (IBAction)moveFrontmostWindowToBottomHalf:(id)sender
 {
-  [_windowPositionManager moveFrontmostWindowElement:[SpectacleAccessibilityElement frontmostWindowElement]
-                                              action:kSpectacleWindowActionBottomHalf];
+  [_windowPositionManager performWindowAction:kSpectacleWindowActionBottomHalf];
 }
 
 - (IBAction)moveFrontmostWindowToUpperLeft:(id)sender
 {
-  [_windowPositionManager moveFrontmostWindowElement:[SpectacleAccessibilityElement frontmostWindowElement]
-                                              action:kSpectacleWindowActionUpperLeft];
+  [_windowPositionManager performWindowAction:kSpectacleWindowActionUpperLeft];
 }
 
 - (IBAction)moveFrontmostWindowToLowerLeft:(id)sender
 {
-  [_windowPositionManager moveFrontmostWindowElement:[SpectacleAccessibilityElement frontmostWindowElement]
-                                              action:kSpectacleWindowActionLowerLeft];
+  [_windowPositionManager performWindowAction:kSpectacleWindowActionLowerLeft];
 }
 
 - (IBAction)moveFrontmostWindowToUpperRight:(id)sender
 {
-  [_windowPositionManager moveFrontmostWindowElement:[SpectacleAccessibilityElement frontmostWindowElement]
-                                              action:kSpectacleWindowActionUpperRight];
+  [_windowPositionManager performWindowAction:kSpectacleWindowActionUpperRight];
 }
 
 - (IBAction)moveFrontmostWindowToLowerRight:(id)sender
 {
-  [_windowPositionManager moveFrontmostWindowElement:[SpectacleAccessibilityElement frontmostWindowElement]
-                                              action:kSpectacleWindowActionLowerRight];
+  [_windowPositionManager performWindowAction:kSpectacleWindowActionLowerRight];
 }
 
 - (IBAction)moveFrontmostWindowToNextDisplay:(id)sender
 {
-  [_windowPositionManager moveFrontmostWindowElement:[SpectacleAccessibilityElement frontmostWindowElement]
-                                              action:kSpectacleWindowActionNextDisplay];
+  [_windowPositionManager performWindowAction:kSpectacleWindowActionNextDisplay];
 }
 
 - (IBAction)moveFrontmostWindowToPreviousDisplay:(id)sender
 {
-  [_windowPositionManager moveFrontmostWindowElement:[SpectacleAccessibilityElement frontmostWindowElement]
-                                              action:kSpectacleWindowActionPreviousDisplay];
+  [_windowPositionManager performWindowAction:kSpectacleWindowActionPreviousDisplay];
 }
 
 - (IBAction)moveFrontmostWindowToNextThird:(id)sender
 {
-  [_windowPositionManager moveFrontmostWindowElement:[SpectacleAccessibilityElement frontmostWindowElement]
-                                              action:kSpectacleWindowActionNextThird];
+  [_windowPositionManager performWindowAction:kSpectacleWindowActionNextThird];
 }
 
 - (IBAction)moveFrontmostWindowToPreviousThird:(id)sender
 {
-  [_windowPositionManager moveFrontmostWindowElement:[SpectacleAccessibilityElement frontmostWindowElement]
-                                              action:kSpectacleWindowActionPreviousThird];
+  [_windowPositionManager performWindowAction:kSpectacleWindowActionPreviousThird];
 }
 
 - (IBAction)makeFrontmostWindowLarger:(id)sender
 {
-  [_windowPositionManager moveFrontmostWindowElement:[SpectacleAccessibilityElement frontmostWindowElement]
-                                              action:kSpectacleWindowActionLarger];
+  [_windowPositionManager performWindowAction:kSpectacleWindowActionLarger];
 }
 
 - (IBAction)makeFrontmostWindowSmaller:(id)sender
 {
-  [_windowPositionManager moveFrontmostWindowElement:[SpectacleAccessibilityElement frontmostWindowElement]
-                                              action:kSpectacleWindowActionSmaller];
+  [_windowPositionManager performWindowAction:kSpectacleWindowActionSmaller];
 }
 
 - (IBAction)undoLastWindowAction:(id)sender
 {
-  [_windowPositionManager undoLastWindowAction];
+  [_windowPositionManager performWindowAction:kSpectacleWindowActionUndo];
 }
 
 - (IBAction)redoLastWindowAction:(id)sender
 {
-  [_windowPositionManager redoLastWindowAction];
+  [_windowPositionManager performWindowAction:kSpectacleWindowActionRedo];
 }
 
 - (IBAction)disableOrEnableShortcutsForAnHour:(id)sender
@@ -295,8 +303,7 @@
 - (void)manageShortcuts
 {
   SpectacleShortcutAction action = ^(SpectacleShortcut *shortcut) {
-    [self->_windowPositionManager moveFrontmostWindowElement:[SpectacleAccessibilityElement frontmostWindowElement]
-                                                      action:shortcut.windowAction];
+    [self->_windowPositionManager performWindowAction:shortcut.windowAction];
   };
   NSArray<SpectacleShortcut *> *shortcuts = [_shortcutStorage loadShortcutsWithAction:action];
   if (shortcuts.count != 0) {

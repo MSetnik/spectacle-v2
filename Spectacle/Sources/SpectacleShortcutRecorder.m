@@ -142,11 +142,17 @@ static const NSEventModifierFlags kCocoaModifierFlagsMask = (NSControlKeyMask
 
 - (void)drawRect:(NSRect)rect
 {
+  // Modern AppKit may invalidate beyond this view when it does not clip to bounds.
+  // Dirty regions are a repaint hint, not the geometry of the recorder itself.
+  rect = self.bounds;
+  [NSGraphicsContext.currentContext saveGraphicsState];
+  NSRectClip(rect);
   CGFloat radius = NSHeight(rect) / 2.0f;
   [self _drawBorderInRect:rect withRadius:radius];
   [self _drawBackgroundInRect:rect withRadius:radius];
   [self _drawBadgeInRect:rect];
   [self _drawLabelInRect:rect];
+  [NSGraphicsContext.currentContext restoreGraphicsState];
 }
 
 - (void)_startRecording

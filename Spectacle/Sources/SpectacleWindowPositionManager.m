@@ -22,6 +22,11 @@
   id<SpectacleWindowMover> _windowMover;
 }
 
+- (void)performWindowAction:(SpectacleWindowAction *)action
+{
+  [self moveFrontmostWindowElement:[SpectacleAccessibilityElement frontmostWindowElement] action:action];
+}
+
 - (instancetype)initWithScreenDetector:(SpectacleScreenDetector *)screenDetector
               windowPositionCalculator:(SpectacleWindowPositionCalculator *)windowPositionCalculator
                        sharedWorkspace:(NSWorkspace *)sharedWorkspace

@@ -1,7 +1,35 @@
 #import "SpectacleLoginItemHelper.h"
+#if SPECTACLE_STORE
+@import ServiceManagement;
+@import AppKit;
+#endif
 
 @implementation SpectacleLoginItemHelper
 
+#if SPECTACLE_STORE
++ (BOOL)isLoginItemEnabledForBundle:(NSBundle *)bundle
+{
+  return SMAppService.mainAppService.status == SMAppServiceStatusEnabled;
+}
+
++ (void)enableLoginItemForBundle:(NSBundle *)bundle
+{
+  NSError *error = nil;
+  if (![SMAppService.mainAppService registerAndReturnError:&error]) {
+    [[NSAlert alertWithError:error] runModal];
+  } else if (SMAppService.mainAppService.status == SMAppServiceStatusRequiresApproval) {
+    [SMAppService openSystemSettingsLoginItems];
+  }
+}
+
++ (void)disableLoginItemForBundle:(NSBundle *)bundle
+{
+  NSError *error = nil;
+  if (![SMAppService.mainAppService unregisterAndReturnError:&error]) {
+    [[NSAlert alertWithError:error] runModal];
+  }
+}
+#else
 + (BOOL)isLoginItemEnabledForBundle:(NSBundle *)bundle
 {
   LSSharedFileListRef sharedFileList = LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
@@ -76,4 +104,5 @@
   }
 }
 
+#endif
 @end

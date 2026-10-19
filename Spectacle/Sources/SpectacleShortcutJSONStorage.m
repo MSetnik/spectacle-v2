@@ -11,6 +11,7 @@
     return nil;
   }
   NSData *content = [NSData dataWithContentsOfURL:shortcutsFileURL];
+  if (!content) return nil;
   NSArray<NSDictionary *> *jsonArray = [NSJSONSerialization JSONObjectWithData:content
                                                                        options:0
                                                                          error:&error];

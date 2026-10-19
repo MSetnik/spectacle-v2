@@ -6,6 +6,12 @@ Easily organize windows without using a mouse.
 
 This fork of [Eric Czarny's Spectacle](https://github.com/eczarny/spectacle) adds native Apple silicon support. Release builds contain both `arm64` and `x86_64` code, so M-series Macs run without Rosetta and Intel Macs use the same application.
 
+## Shortcuts / Mac App Store edition
+
+The **Spectacle Store** scheme builds a separate sandboxed edition for macOS 13+ that delegates window movement to Apple's Shortcuts app. It shares keyboard commands and layout calculations with the direct edition, uses a companion **Spectacle Window Bridge** Shortcut, and has its own settings container. The direct edition described below continues to use Accessibility.
+
+See [setup, build instructions, and validation status](docs/SHORTCUTS_BACKEND.md). The backend and companion source are implemented; signing/import and real-window acceptance testing remain required before calling this edition ready. App Store provisioning and submission have not been completed.
+
 ## System requirements
 
 - macOS 12 Monterey or later.

@@ -6,7 +6,7 @@ Investigated on 2026-10-19 using primary public sources, snApp source inspection
 
 Two precedents exist: older apps retained under historical sandbox exemptions, and newer sandboxed apps that delegate window operations to Apple Shortcuts. The second is a concrete candidate for this fork. The earlier categorical assessment that this product cannot reach the Store was too broad; it applies to the current direct-Accessibility architecture.
 
-This is research evidence, not a completed Spectacle implementation or a guarantee of App Review approval.
+This research informed the [implemented Spectacle backend](SHORTCUTS_BACKEND.md). It is not a guarantee of App Review approval or of runtime parity; the implementation document records the outstanding live tests.
 
 ## Concrete examples
 
@@ -92,6 +92,6 @@ The current fork targets macOS 12. Shortcuts debuted there, but that does not pr
 
 ## Delivery status
 
-Research and the revised plan are complete. The sandboxed Spectacle backend, companion Shortcut, latency measurements, and manual acceptance tests are not implemented or completed. Existing native ARM64/Intel build and test evidence remains recorded in [readiness](APP_STORE_READINESS.md).
+Research and the revised plan are complete. The sandboxed Spectacle backend and unsigned companion source are implemented, with 116 passing local tests and universal builds. The user approved Apple validation, but the signing command returned 504/502 errors. Companion import, real movement, latency measurements, and manual acceptance tests remain outstanding. See [implementation status](SHORTCUTS_BACKEND.md) and [readiness](APP_STORE_READINESS.md).
 
 After the prototype, complete Store identity, signing/provisioning, settings migration, login-item modernization, metadata, privacy disclosures, credits, and review instructions. Contacting Apple support is not an outstanding task.

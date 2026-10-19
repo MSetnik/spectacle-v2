@@ -5,7 +5,7 @@
 @class SpectacleAppDelegate;
 @class SpectacleShortcutManager;
 @class SpectacleShortcutRecorder;
-@class SpectacleWindowPositionManager;
+@protocol SpectacleWindowActionPerformer;
 
 @protocol SpectacleShortcutStorage;
 
@@ -38,7 +38,7 @@
 @property (nonatomic, strong) IBOutlet NSPopUpButton *statusItemEnabled;
 
 - (instancetype)initWithShortcutManager:(SpectacleShortcutManager *)shortcutManager
-                  windowPositionManager:(SpectacleWindowPositionManager *)windowPositionManager
+                  windowPositionManager:(id<SpectacleWindowActionPerformer>)windowPositionManager
                         shortcutStorage:(id<SpectacleShortcutStorage>)shortcutStorage;
 
 - (void)loadRegisteredShortcuts;

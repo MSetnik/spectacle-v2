@@ -2,7 +2,6 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-#import "SpectacleAccessibilityElement.h"
 #import "SpectacleDefaultShortcutHelpers.h"
 #import "SpectacleLoginItemHelper.h"
 #import "SpectacleRegisteredShortcutValidator.h"
@@ -12,18 +11,18 @@
 #import "SpectacleShortcutStorage.h"
 #import "SpectacleShortcutValidation.h"
 #import "SpectacleUtilities.h"
-#import "SpectacleWindowPositionManager.h"
+#import "SpectacleWindowActionPerformer.h"
 
 @implementation SpectaclePreferencesController
 {
   SpectacleShortcutManager *_shortcutManager;
-  SpectacleWindowPositionManager *_windowPositionManager;
+  id<SpectacleWindowActionPerformer> _windowPositionManager;
   id<SpectacleShortcutStorage> _shortcutStorage;
   NSDictionary<NSString *, SpectacleShortcutRecorder *> *_shortcutRecorders;
 }
 
 - (instancetype)initWithShortcutManager:(SpectacleShortcutManager *)shortcutManager
-                  windowPositionManager:(SpectacleWindowPositionManager *)windowPositionManager
+                  windowPositionManager:(id<SpectacleWindowActionPerformer>)windowPositionManager
                         shortcutStorage:(id<SpectacleShortcutStorage>)shortcutStorage
 {
   if (self = [super initWithWindowNibName:@"SpectaclePreferencesWindow"]) {
@@ -81,8 +80,7 @@
    didReceiveNewShortcut:(SpectacleShortcut *)shortcut
 {
   [_shortcutManager updateShortcut:[shortcut copyWithShortcutAction:^(SpectacleShortcut *shortcut) {
-    [self->_windowPositionManager moveFrontmostWindowElement:[SpectacleAccessibilityElement frontmostWindowElement]
-                                                      action:shortcut.windowAction];
+    [self->_windowPositionManager performWindowAction:shortcut.windowAction];
   }]];
   [[NSNotificationCenter defaultCenter] postNotificationName:@"SpectacleShortcutChangedNotification" object:self];
 }
@@ -132,8 +130,7 @@ didClearExistingShortcut:(SpectacleShortcut *)shortcut
 {
   [SpectacleUtilities displayRestoreDefaultsAlertWithConfirmationCallback:^() {
     NSArray<SpectacleShortcut *> *shortcuts = SpectacleDefaultShortcutsWithAction(^(SpectacleShortcut *shortcut) {
-      [self->_windowPositionManager moveFrontmostWindowElement:[SpectacleAccessibilityElement frontmostWindowElement]
-                                                        action:shortcut.windowAction];
+      [self->_windowPositionManager performWindowAction:shortcut.windowAction];
     });
     [self->_shortcutManager updateShortcuts:shortcuts];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"SpectacleRestoreDefaultShortcutsNotification"
@@ -149,6 +146,7 @@ didClearExistingShortcut:(SpectacleShortcut *)shortcut
   } else {
     [SpectacleLoginItemHelper disableLoginItemForBundle:applicationBundle];
   }
+  self.loginItemEnabled.state = [SpectacleLoginItemHelper isLoginItemEnabledForBundle:applicationBundle] ? NSOnState : NSOffState;
 }
 
 - (IBAction)toggleStatusItem:(id)sender

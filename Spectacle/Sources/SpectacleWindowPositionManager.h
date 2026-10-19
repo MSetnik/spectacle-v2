@@ -1,6 +1,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import "SpectacleMacros.h"
+#import "SpectacleWindowActionPerformer.h"
 #import "SpectacleWindowAction.h"
 
 typedef void (^SpectacleFailureFeedback)(void);
@@ -12,7 +13,7 @@ typedef void (^SpectacleFailureFeedback)(void);
 
 @protocol SpectacleWindowMover;
 
-@interface SpectacleWindowPositionManager : NSObject
+@interface SpectacleWindowPositionManager : NSObject <SpectacleWindowActionPerformer>
 
 - (instancetype)initWithScreenDetector:(SpectacleScreenDetector *)screenDetector
               windowPositionCalculator:(SpectacleWindowPositionCalculator *)windowPositionCalculator
