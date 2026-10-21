@@ -462,6 +462,7 @@ static NSTextField *SpectacleSetupLabel(NSRect frame, NSFont *font)
     case SpectacleSetupStepTest:
       if (_setupSnapVerified && AXIsProcessTrustedWithOptions(NULL)) {
         [NSUserDefaults.standardUserDefaults setBool:YES forKey:SpectacleSetupCompleteKey];
+        [_setupTestWindow close];
         [_setupWindow close];
       }
       break;
@@ -515,12 +516,14 @@ static NSTextField *SpectacleSetupLabel(NSRect frame, NSFont *font)
   NSScreen *screen = _setupTestWindow.screen ?: NSScreen.mainScreen;
   NSRect visible = screen.visibleFrame;
   NSRect frame = _setupTestWindow.frame;
-  CGFloat expectedLeft = NSMidX(visible);
-  CGFloat expectedWidth = NSWidth(visible) / 2.0;
-  if (fabs(NSMinX(frame) - expectedLeft) > 32 || fabs(NSWidth(frame) - expectedWidth) > 32
-      || fabs(NSHeight(frame) - NSHeight(visible)) > 32) return;
+  CGFloat expectedWidth = floor(NSWidth(visible) / 2.0);
+  CGFloat expectedLeft = NSMaxX(visible) - expectedWidth;
+  // A generous tolerance used to hide the test window before deferred growth
+  // finished, leaving users with a visibly undersized snap.
+  if (fabs(NSMinX(frame) - expectedLeft) > 2 || fabs(NSMinY(frame) - NSMinY(visible)) > 2
+      || fabs(NSWidth(frame) - expectedWidth) > 2
+      || fabs(NSHeight(frame) - NSHeight(visible)) > 2) return;
   _setupSnapVerified = YES;
-  [_setupTestWindow orderOut:self];
   [self refreshSetupWindow];
   [NSApp activateIgnoringOtherApps:YES];
   [_setupWindow makeKeyAndOrderFront:self];
