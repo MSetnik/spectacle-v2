@@ -54,6 +54,27 @@
 }
 @end
 
+// Models apps that commit AX resize requests only after returning to their event loop.
+@interface SpectacleDeferredGrowthTestElement : SpectacleSteppedGrowthTestElement
+@property BOOL focused;
+@end
+@implementation SpectacleDeferredGrowthTestElement
+- (BOOL)isFocusedWindow { return self.focused; }
+- (void)setRectOfElement:(CGRect)rect
+{
+  [super setPositionOfElement:rect.origin];
+  [self setSizeOfElement:rect.size];
+}
+- (void)setSizeOfElement:(CGSize)size
+{
+  self.sizeWrites++;
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 20 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+    CGSize limited = [self limitedSize:size];
+    self.rect = CGRectMake(self.rect.origin.x, self.rect.origin.y, limited.width, limited.height);
+  });
+}
+@end
+
 @interface SpectacleConstrainedTestElement : SpectacleTestElement
 @property CGSize minimumSize;
 @end
@@ -255,6 +276,28 @@
   XCTAssertTrue(CGSizeEqualToSize(element.rect.size, CGSizeMake(320, 240)));
   XCTAssertTrue(CGPointEqualToPoint(element.rect.origin, target.origin));
   XCTAssertEqual(element.sizeWrites, 1u);
+}
+
+- (void)testDeferredGrowthReachesFullscreenWithoutAnotherShortcut
+{
+  SpectacleDeferredGrowthTestElement *element = [SpectacleDeferredGrowthTestElement new];
+  element.rect = CGRectMake(180, 180, 320, 240);
+  element.maximumGrowthPerWrite = 160;
+  element.focused = YES;
+  CGRect target = CGRectMake(0, 26, 1200, 800);
+  SpectacleStandardWindowMover *mover = [SpectacleStandardWindowMover newWithInnerWindowMover:
+                                    [SpectacleQuantizedWindowMover new]];
+  [mover moveWindowRect:target frameOfScreen:_screen.frame visibleFrameOfScreen:_screen.visibleFrame
+     frontmostWindowElement:element action:kSpectacleWindowActionFullscreen];
+  XCTAssertFalse(CGSizeEqualToSize(element.rect.size, target.size));
+
+  XCTestExpectation *settled = [self expectationWithDescription:@"deferred AX growth completes"];
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 700 * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
+    XCTAssertTrue(CGRectEqualToRect(element.rect, target));
+    XCTAssertLessThanOrEqual(element.sizeWrites, 24u);
+    [settled fulfill];
+  });
+  [self waitForExpectations:@[settled] timeout:1.5];
 }
 
 @end

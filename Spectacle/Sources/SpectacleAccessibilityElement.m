@@ -138,6 +138,23 @@
   CFRelease(sizeRef);
 }
 
+- (BOOL)isFocusedWindow
+{
+  if (!_underlyingElement) return NO;
+  pid_t pid = 0;
+  if (AXUIElementGetPid(_underlyingElement, &pid) != kAXErrorSuccess
+      || [NSWorkspace sharedWorkspace].frontmostApplication.processIdentifier != pid) return NO;
+
+  AXUIElementRef application = AXUIElementCreateApplication(pid);
+  AXUIElementRef focusedWindow = NULL;
+  AXError result = AXUIElementCopyAttributeValue(application, kAXFocusedWindowAttribute,
+                                                 (CFTypeRef *)&focusedWindow);
+  BOOL focused = result == kAXErrorSuccess && focusedWindow && CFEqual(_underlyingElement, focusedWindow);
+  if (focusedWindow) CFRelease(focusedWindow);
+  CFRelease(application);
+  return focused;
+}
+
 + (CGRect)normalizeCoordinatesOfRect:(CGRect)rect frameOfScreen:(CGRect)frameOfScreen
 {
   CGRect frameOfScreenWithMenuBar = [[[NSScreen screens] objectAtIndex:0] frame];

@@ -22,11 +22,11 @@ The original project is no longer maintained. Its historical downloads are Intel
 
 ## Installing a local build
 
-1. Build with `./scripts/build.sh` (see below), or extract this fork's `Spectacle-universal.zip` artifact.
-2. Quit any running copy of Spectacle, then copy the new `Spectacle.app` into Applications.
-3. Open the app and grant access in **System Settings → Privacy & Security → Accessibility**. If an old entry no longer works after replacing the app, remove that entry and add the new copy.
+1. Build with `./scripts/build.sh` (see below), or extract this fork's `spectacle-matko-universal.zip` artifact.
+2. Copy `spectacle-matko.app` into Applications. It has a separate bundle identifier, so the original `Spectacle.app` can stay installed.
+3. Quit the original Spectacle before testing: both copies use the same default global shortcuts. Open `spectacle-matko.app` and follow its three-step setup window to grant window control and test a snap.
 
-The original bundle identifier and shortcut storage location are preserved, so existing settings can be reused. Keep only one copy running to avoid competing global shortcuts.
+The direct test app has bundle identifier `io.github.msetnik.spectacle-matko`. It keeps the shared shortcut storage location, so existing key bindings can be reused. On current macOS, window control is in **System Settings → Privacy & Security → Device Control and Data Access**; on older versions it is called **Accessibility**.
 
 Local and CI builds are **ad-hoc signed, not Developer ID signed or notarized**. Downloaded artifacts may require approval in System Settings → Privacy & Security. Public distribution with a verified developer identity requires separate Developer ID signing and Apple notarization.
 

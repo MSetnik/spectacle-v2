@@ -53,5 +53,6 @@
 - (IBAction)disableOrEnableShortcutsForApplication:(id)sender;
 
 - (IBAction)openSystemPreferences:(id)sender;
+- (IBAction)showSetupWindow:(id)sender;
 
 @end

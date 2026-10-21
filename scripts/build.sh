@@ -14,6 +14,9 @@ app="$repo_dir/build/DerivedData/Build/Products/Release/Spectacle.app"
 /usr/bin/codesign --verify --deep --strict "$app"
 
 mkdir -p "$repo_dir/build/dist"
-/usr/bin/ditto -c -k --sequesterRsrc --keepParent "$app" \
-  "$repo_dir/build/dist/Spectacle-universal.zip"
-printf '\nApplication: %s\nArchive: %s\n' "$app" "$repo_dir/build/dist/Spectacle-universal.zip"
+named_app="$repo_dir/build/dist/spectacle-matko.app"
+/bin/rm -rf "$named_app"
+/usr/bin/ditto "$app" "$named_app"
+/usr/bin/ditto -c -k --sequesterRsrc --keepParent "$named_app" \
+  "$repo_dir/build/dist/spectacle-matko-universal.zip"
+printf '\nApplication: %s\nArchive: %s\n' "$named_app" "$repo_dir/build/dist/spectacle-matko-universal.zip"

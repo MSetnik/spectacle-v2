@@ -16,6 +16,7 @@
 - (void)setPositionOfElement:(CGPoint)position;
 - (void)setSizeOfElement:(CGSize)size;
 - (void)setRectOfElement:(CGRect)rect;
+- (BOOL)isFocusedWindow;
 
 + (CGRect)normalizeCoordinatesOfRect:(CGRect)rect frameOfScreen:(CGRect)frameOfScreen;
 
