@@ -13,6 +13,7 @@
 - (void)setValue:(AXValueRef)value forAttribute:(CFStringRef)attribute;
 
 - (CGRect)rectOfElement;
+- (void)setPositionOfElement:(CGPoint)position;
 - (void)setRectOfElement:(CGRect)rect;
 
 + (CGRect)normalizeCoordinatesOfRect:(CGRect)rect frameOfScreen:(CGRect)frameOfScreen;

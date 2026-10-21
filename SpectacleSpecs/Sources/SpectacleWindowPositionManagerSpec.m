@@ -1,6 +1,7 @@
 #import <XCTest/XCTest.h>
 
 #import "SpectacleAccessibilityElement.h"
+#import "SpectacleQuantizedWindowMover.h"
 #import "SpectacleScreenDetectionResult.h"
 #import "SpectacleScreenDetector.h"
 #import "SpectacleStandardWindowMover.h"
@@ -21,12 +22,26 @@
 @property BOOL sheet;
 @property BOOL systemDialog;
 @property NSUInteger writes;
+@property NSUInteger positionWrites;
 @end
 @implementation SpectacleTestElement
 - (CGRect)rectOfElement { return self.rect; }
 - (BOOL)isSheet { return self.sheet; }
 - (BOOL)isSystemDialog { return self.systemDialog; }
 - (void)setRectOfElement:(CGRect)rect { self.rect = rect; self.writes++; }
+- (void)setPositionOfElement:(CGPoint)position { self.rect = CGRectMake(position.x, position.y, self.rect.size.width, self.rect.size.height); self.writes++; self.positionWrites++; }
+@end
+
+@interface SpectacleConstrainedTestElement : SpectacleTestElement
+@property CGSize minimumSize;
+@end
+@implementation SpectacleConstrainedTestElement
+- (void)setRectOfElement:(CGRect)rect
+{
+  rect.size.width = MAX(rect.size.width, self.minimumSize.width);
+  rect.size.height = MAX(rect.size.height, self.minimumSize.height);
+  [super setRectOfElement:rect];
+}
 @end
 
 @interface SpectacleTestScreenDetector : SpectacleScreenDetector
@@ -166,6 +181,29 @@
   XCTAssertTrue(CGRectEqualToRect(_element.rect, expectedOutput));
   XCTAssertEqual(_element.writes, 1u);
   XCTAssertEqual(_failures, 0u);
+}
+
+- (void)testPureTranslationUsesOnlyOneAccessibilityWrite
+{
+  CGRect target = CGRectMake(300, 200, _element.rect.size.width, _element.rect.size.height);
+  [[SpectacleStandardWindowMover new] moveWindowRect:target frameOfScreen:_screen.frame
+                               visibleFrameOfScreen:_screen.visibleFrame frontmostWindowElement:_element
+                                             action:kSpectacleWindowActionRightHalf];
+  XCTAssertTrue(CGRectEqualToRect(_element.rect, target));
+  XCTAssertEqual(_element.writes, 1u);
+  XCTAssertEqual(_element.positionWrites, 1u);
+}
+
+- (void)testConstrainedWindowDoesNotTriggerUnboundedResizeAttempts
+{
+  SpectacleConstrainedTestElement *element = [SpectacleConstrainedTestElement new];
+  element.rect = CGRectMake(0, 0, 600, 400);
+  element.minimumSize = element.rect.size;
+  [[SpectacleQuantizedWindowMover new] moveWindowRect:CGRectMake(0, 0, 400, 300)
+                                      frameOfScreen:_screen.frame visibleFrameOfScreen:_screen.visibleFrame
+                            frontmostWindowElement:element action:kSpectacleWindowActionLeftHalf];
+  XCTAssertLessThanOrEqual(element.writes, 3u);
+  XCTAssertTrue(CGSizeEqualToSize(element.rect.size, element.minimumSize));
 }
 
 @end

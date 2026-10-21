@@ -124,6 +124,13 @@
   CFRelease(sizeRef);
 }
 
+- (void)setPositionOfElement:(CGPoint)position
+{
+  AXValueRef positionRef = AXValueCreate(kAXValueCGPointType, (const void *)&position);
+  [self setValue:positionRef forAttribute:kAXPositionAttribute];
+  CFRelease(positionRef);
+}
+
 + (CGRect)normalizeCoordinatesOfRect:(CGRect)rect frameOfScreen:(CGRect)frameOfScreen
 {
   CGRect frameOfScreenWithMenuBar = [[[NSScreen screens] objectAtIndex:0] frame];

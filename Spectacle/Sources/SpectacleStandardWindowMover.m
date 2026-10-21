@@ -35,7 +35,12 @@ frontmostWindowElement:(SpectacleAccessibilityElement *)frontmostWindowElement
   if (CGRectIsNull(previousWindowRect)) {
     return;
   }
-  [frontmostWindowElement setRectOfElement:windowRect];
+  // A pure translation needs one cross-process AX write, not size/position/size.
+  if (CGSizeEqualToSize(previousWindowRect.size, windowRect.size)) {
+    [frontmostWindowElement setPositionOfElement:windowRect.origin];
+  } else {
+    [frontmostWindowElement setRectOfElement:windowRect];
+  }
   [_innerWindowMover moveWindowRect:windowRect
                       frameOfScreen:frameOfScreen
                visibleFrameOfScreen:visibleFrameOfScreen
