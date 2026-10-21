@@ -23,6 +23,7 @@
 @property BOOL systemDialog;
 @property NSUInteger writes;
 @property NSUInteger positionWrites;
+@property NSUInteger sizeWrites;
 @end
 @implementation SpectacleTestElement
 - (CGRect)rectOfElement { return self.rect; }
@@ -30,6 +31,27 @@
 - (BOOL)isSystemDialog { return self.systemDialog; }
 - (void)setRectOfElement:(CGRect)rect { self.rect = rect; self.writes++; }
 - (void)setPositionOfElement:(CGPoint)position { self.rect = CGRectMake(position.x, position.y, self.rect.size.width, self.rect.size.height); self.writes++; self.positionWrites++; }
+- (void)setSizeOfElement:(CGSize)size { self.rect = CGRectMake(self.rect.origin.x, self.rect.origin.y, size.width, size.height); self.writes++; self.sizeWrites++; }
+@end
+
+@interface SpectacleSteppedGrowthTestElement : SpectacleTestElement
+@property CGFloat maximumGrowthPerWrite;
+@end
+@implementation SpectacleSteppedGrowthTestElement
+- (CGSize)limitedSize:(CGSize)requested
+{
+  return CGSizeMake(MIN(requested.width, self.rect.size.width + self.maximumGrowthPerWrite),
+                    MIN(requested.height, self.rect.size.height + self.maximumGrowthPerWrite));
+}
+- (void)setRectOfElement:(CGRect)rect
+{
+  rect.size = [self limitedSize:rect.size];
+  [super setRectOfElement:rect];
+}
+- (void)setSizeOfElement:(CGSize)size
+{
+  [super setSizeOfElement:[self limitedSize:size]];
+}
 @end
 
 @interface SpectacleConstrainedTestElement : SpectacleTestElement
@@ -204,6 +226,35 @@
                             frontmostWindowElement:element action:kSpectacleWindowActionLeftHalf];
   XCTAssertLessThanOrEqual(element.writes, 3u);
   XCTAssertTrue(CGSizeEqualToSize(element.rect.size, element.minimumSize));
+}
+
+- (void)testSmallWindowReachesFullscreenSizeInOneActionDespiteSteppedGrowth
+{
+  SpectacleSteppedGrowthTestElement *element = [SpectacleSteppedGrowthTestElement new];
+  element.rect = CGRectMake(180, 180, 320, 240);
+  element.maximumGrowthPerWrite = 200;
+  CGRect target = CGRectMake(0, 26, 1200, 800);
+  SpectacleStandardWindowMover *mover = [SpectacleStandardWindowMover newWithInnerWindowMover:
+                                    [SpectacleQuantizedWindowMover new]];
+  [mover moveWindowRect:target frameOfScreen:_screen.frame visibleFrameOfScreen:_screen.visibleFrame
+     frontmostWindowElement:element action:kSpectacleWindowActionFullscreen];
+  XCTAssertTrue(CGRectEqualToRect(element.rect, target));
+  XCTAssertLessThanOrEqual(element.sizeWrites, 8u);
+}
+
+- (void)testWindowThatCannotGrowStopsAfterOneAdditionalSizeRequest
+{
+  SpectacleSteppedGrowthTestElement *element = [SpectacleSteppedGrowthTestElement new];
+  element.rect = CGRectMake(180, 180, 320, 240);
+  element.maximumGrowthPerWrite = 0;
+  CGRect target = CGRectMake(0, 26, 1200, 800);
+  SpectacleStandardWindowMover *mover = [SpectacleStandardWindowMover newWithInnerWindowMover:
+                                    [SpectacleQuantizedWindowMover new]];
+  [mover moveWindowRect:target frameOfScreen:_screen.frame visibleFrameOfScreen:_screen.visibleFrame
+     frontmostWindowElement:element action:kSpectacleWindowActionFullscreen];
+  XCTAssertTrue(CGSizeEqualToSize(element.rect.size, CGSizeMake(320, 240)));
+  XCTAssertTrue(CGPointEqualToPoint(element.rect.origin, target.origin));
+  XCTAssertEqual(element.sizeWrites, 1u);
 }
 
 @end

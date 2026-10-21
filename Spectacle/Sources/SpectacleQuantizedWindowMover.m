@@ -32,7 +32,25 @@ frontmostWindowElement:(SpectacleAccessibilityElement *)frontmostWindowElement
                 action:(SpectacleWindowAction *)action
 {
   CGRect movedWindowRect = [frontmostWindowElement rectOfElement];
-  if (!CGRectEqualToRect(movedWindowRect, windowRect)) {
+  if (CGRectIsNull(movedWindowRect)) return;
+
+  // Some apps accept only part of a large resize per AX request. Finish that
+  // growth within this action, after moving to the destination origin.
+  if (movedWindowRect.size.width < windowRect.size.width || movedWindowRect.size.height < windowRect.size.height) {
+    [frontmostWindowElement setPositionOfElement:windowRect.origin];
+    for (NSUInteger attempt = 0; attempt < 8; attempt++) {
+      CGSize previousSize = movedWindowRect.size;
+      [frontmostWindowElement setSizeOfElement:windowRect.size];
+      movedWindowRect = [frontmostWindowElement rectOfElement];
+      if (CGRectIsNull(movedWindowRect)) return;
+      if ((movedWindowRect.size.width >= windowRect.size.width && movedWindowRect.size.height >= windowRect.size.height)
+          || CGSizeEqualToSize(previousSize, movedWindowRect.size)) break;
+    }
+  }
+
+  // Quantization correction applies only when the app made the window too large.
+  // Centering an undersized window here made each subsequent snap grow in steps.
+  if (movedWindowRect.size.width > windowRect.size.width || movedWindowRect.size.height > windowRect.size.height) {
     CGRect adjustedWindowRect = windowRect;
     NSUInteger attempts = 0;
     NSUInteger unchangedAttempts = 0;
@@ -57,6 +75,8 @@ frontmostWindowElement:(SpectacleAccessibilityElement *)frontmostWindowElement
     adjustedWindowRect.origin.x += floor((windowRect.size.width - movedWindowRect.size.width) / 2.0f);
     adjustedWindowRect.origin.y += floor((windowRect.size.height - movedWindowRect.size.height) / 2.0f);
     [frontmostWindowElement setRectOfElement:adjustedWindowRect];
+  } else if (!CGPointEqualToPoint(movedWindowRect.origin, windowRect.origin)) {
+    [frontmostWindowElement setPositionOfElement:windowRect.origin];
   }
   [_innerWindowMover moveWindowRect:windowRect
                       frameOfScreen:frameOfScreen
