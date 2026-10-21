@@ -41,16 +41,27 @@ for action in actions:
     if kind == "conditional":
         group = parameters["GroupingIdentifier"]
         if parameters["WFControlFlowMode"] == 0:
+            conditional_input = parameters["WFInput"]
+            assert conditional_input.get("Type") == "Variable"
+            assert conditional_input.get("Variable", {}).get("WFSerializationType") == "WFTextTokenAttachment"
+            assert conditional_input["Variable"]["Value"]["Aggrandizements"] == [
+                {"Type": "WFCoercionVariableAggrandizement", "CoercionItemClass": "WFStringContentItem"}
+            ]
+            assert parameters.get("WFConditionalActionString"), "If comparison must be visible in Shortcuts"
             groups.append(group)
         else:
             assert groups.pop() == group, "Unbalanced conditional"
+    if kind == "output":
+        output = parameters["WFOutput"]
+        assert output["WFSerializationType"] == "WFTextTokenString"
+        assert output["Value"]["string"] == "\ufffc"
 assert not groups
 find = next(a["WFWorkflowActionParameters"] for a in actions if a["WFWorkflowActionIdentifier"].endswith("filter.windows"))
 assert find["WFContentItemLimitEnabled"] is False, "Do not mask an ambiguous target with a one-window limit"
 predicates = find["WFContentItemFilter"]["Value"]
 assert predicates["WFActionParameterFilterPrefix"] == 1, "All identity predicates must match"
 assert {p["Property"] for p in predicates["WFActionParameterFilterTemplates"]} == {
-    "App Name", "X Position", "Y Position", "Width", "Height", "Is Visible"
+    "App Name", "X Position", "Y Position", "Width", "Height"
 }
 names = [a["WFWorkflowActionParameters"]["CustomOutputName"] for a in actions]
 assert names.index("Unique window guard end") < names.index("Resize") < names.index("Move")

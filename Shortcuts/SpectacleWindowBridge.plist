@@ -43,7 +43,7 @@
 			<key>WFWorkflowActionParameters</key>
 			<dict>
 				<key>WFCommentActionText</key>
-				<string>Companion for Spectacle. Receives a JSON request from the app. Uses only built-in window actions. No network, shell scripts, clipboard, or document access. Keep this Shortcut's name. A move is allowed only when exactly one visible window matches the captured app and frame.</string>
+				<string>Companion for Spectacle. Receives a JSON request from the app. Uses only built-in window actions. No network, shell scripts, clipboard, or document access. Keep this Shortcut's name. A move is allowed only when exactly one window matches the captured app and frame.</string>
 				<key>UUID</key>
 				<string>0C61B713-9885-5022-88C6-9C72A0F21F3F</string>
 				<key>CustomOutputName</key>
@@ -126,17 +126,31 @@
 			<dict>
 				<key>WFInput</key>
 				<dict>
-					<key>Value</key>
+					<key>Type</key>
+					<string>Variable</string>
+					<key>Variable</key>
 					<dict>
-						<key>Type</key>
-						<string>ActionOutput</string>
-						<key>OutputUUID</key>
-						<string>C2AE1892-5241-5E31-8965-3AD081B1341A</string>
-						<key>OutputName</key>
-						<string>protocol</string>
+						<key>Value</key>
+						<dict>
+							<key>Type</key>
+							<string>ActionOutput</string>
+							<key>OutputUUID</key>
+							<string>C2AE1892-5241-5E31-8965-3AD081B1341A</string>
+							<key>OutputName</key>
+							<string>protocol</string>
+							<key>Aggrandizements</key>
+							<array>
+								<dict>
+									<key>Type</key>
+									<string>WFCoercionVariableAggrandizement</string>
+									<key>CoercionItemClass</key>
+									<string>WFStringContentItem</string>
+								</dict>
+							</array>
+						</dict>
+						<key>WFSerializationType</key>
+						<string>WFTextTokenAttachment</string>
 					</dict>
-					<key>WFSerializationType</key>
-					<string>WFTextTokenAttachment</string>
 				</dict>
 				<key>WFCondition</key>
 				<integer>5</integer>
@@ -144,8 +158,8 @@
 				<integer>0</integer>
 				<key>GroupingIdentifier</key>
 				<string>15AD95DD-2CB8-519F-93BF-0CAEED41C64A</string>
-				<key>WFNumberValue</key>
-				<integer>2</integer>
+				<key>WFConditionalActionString</key>
+				<string>2</string>
 				<key>UUID</key>
 				<string>001DB2D9-9FE7-511A-812D-EDD733A8C1CC</string>
 				<key>CustomOutputName</key>
@@ -194,16 +208,26 @@
 				<dict>
 					<key>Value</key>
 					<dict>
-						<key>Type</key>
-						<string>ActionOutput</string>
-						<key>OutputUUID</key>
-						<string>7038A44D-A5CF-5479-A72E-52867476A212</string>
-						<key>OutputName</key>
-						<string>Incompatible protocol</string>
+						<key>string</key>
+						<string>￼</string>
+						<key>attachmentsByRange</key>
+						<dict>
+							<key>{0, 1}</key>
+							<dict>
+								<key>Type</key>
+								<string>ActionOutput</string>
+								<key>OutputUUID</key>
+								<string>7038A44D-A5CF-5479-A72E-52867476A212</string>
+								<key>OutputName</key>
+								<string>Incompatible protocol</string>
+							</dict>
+						</dict>
 					</dict>
 					<key>WFSerializationType</key>
-					<string>WFTextTokenAttachment</string>
+					<string>WFTextTokenString</string>
 				</dict>
+				<key>WFNoOutputSurfaceBehavior</key>
+				<string>Respond</string>
 				<key>UUID</key>
 				<string>A6842F14-331A-5692-B944-6CAEED6A6855</string>
 				<key>CustomOutputName</key>
@@ -232,17 +256,31 @@
 			<dict>
 				<key>WFInput</key>
 				<dict>
-					<key>Value</key>
+					<key>Type</key>
+					<string>Variable</string>
+					<key>Variable</key>
 					<dict>
-						<key>Type</key>
-						<string>ActionOutput</string>
-						<key>OutputUUID</key>
-						<string>39053FC0-AFFA-5B8E-A053-E0298EA02061</string>
-						<key>OutputName</key>
-						<string>operation</string>
+						<key>Value</key>
+						<dict>
+							<key>Type</key>
+							<string>ActionOutput</string>
+							<key>OutputUUID</key>
+							<string>39053FC0-AFFA-5B8E-A053-E0298EA02061</string>
+							<key>OutputName</key>
+							<string>operation</string>
+							<key>Aggrandizements</key>
+							<array>
+								<dict>
+									<key>Type</key>
+									<string>WFCoercionVariableAggrandizement</string>
+									<key>CoercionItemClass</key>
+									<string>WFStringContentItem</string>
+								</dict>
+							</array>
+						</dict>
+						<key>WFSerializationType</key>
+						<string>WFTextTokenAttachment</string>
 					</dict>
-					<key>WFSerializationType</key>
-					<string>WFTextTokenAttachment</string>
 				</dict>
 				<key>WFCondition</key>
 				<integer>4</integer>
@@ -300,16 +338,26 @@
 				<dict>
 					<key>Value</key>
 					<dict>
-						<key>Type</key>
-						<string>ActionOutput</string>
-						<key>OutputUUID</key>
-						<string>A23EE9D4-771B-502D-8C7D-9459C72F9F54</string>
-						<key>OutputName</key>
-						<string>Connection verified</string>
+						<key>string</key>
+						<string>￼</string>
+						<key>attachmentsByRange</key>
+						<dict>
+							<key>{0, 1}</key>
+							<dict>
+								<key>Type</key>
+								<string>ActionOutput</string>
+								<key>OutputUUID</key>
+								<string>A23EE9D4-771B-502D-8C7D-9459C72F9F54</string>
+								<key>OutputName</key>
+								<string>Connection verified</string>
+							</dict>
+						</dict>
 					</dict>
 					<key>WFSerializationType</key>
-					<string>WFTextTokenAttachment</string>
+					<string>WFTextTokenString</string>
 				</dict>
+				<key>WFNoOutputSurfaceBehavior</key>
+				<string>Respond</string>
 				<key>UUID</key>
 				<string>553B84E7-3E3B-57D6-8059-8701785F50CB</string>
 				<key>CustomOutputName</key>
@@ -338,17 +386,31 @@
 			<dict>
 				<key>WFInput</key>
 				<dict>
-					<key>Value</key>
+					<key>Type</key>
+					<string>Variable</string>
+					<key>Variable</key>
 					<dict>
-						<key>Type</key>
-						<string>ActionOutput</string>
-						<key>OutputUUID</key>
-						<string>39053FC0-AFFA-5B8E-A053-E0298EA02061</string>
-						<key>OutputName</key>
-						<string>operation</string>
+						<key>Value</key>
+						<dict>
+							<key>Type</key>
+							<string>ActionOutput</string>
+							<key>OutputUUID</key>
+							<string>39053FC0-AFFA-5B8E-A053-E0298EA02061</string>
+							<key>OutputName</key>
+							<string>operation</string>
+							<key>Aggrandizements</key>
+							<array>
+								<dict>
+									<key>Type</key>
+									<string>WFCoercionVariableAggrandizement</string>
+									<key>CoercionItemClass</key>
+									<string>WFStringContentItem</string>
+								</dict>
+							</array>
+						</dict>
+						<key>WFSerializationType</key>
+						<string>WFTextTokenAttachment</string>
 					</dict>
-					<key>WFSerializationType</key>
-					<string>WFTextTokenAttachment</string>
 				</dict>
 				<key>WFCondition</key>
 				<integer>5</integer>
@@ -371,17 +433,31 @@
 			<dict>
 				<key>WFInput</key>
 				<dict>
-					<key>Value</key>
+					<key>Type</key>
+					<string>Variable</string>
+					<key>Variable</key>
 					<dict>
-						<key>Type</key>
-						<string>ActionOutput</string>
-						<key>OutputUUID</key>
-						<string>39053FC0-AFFA-5B8E-A053-E0298EA02061</string>
-						<key>OutputName</key>
-						<string>operation</string>
+						<key>Value</key>
+						<dict>
+							<key>Type</key>
+							<string>ActionOutput</string>
+							<key>OutputUUID</key>
+							<string>39053FC0-AFFA-5B8E-A053-E0298EA02061</string>
+							<key>OutputName</key>
+							<string>operation</string>
+							<key>Aggrandizements</key>
+							<array>
+								<dict>
+									<key>Type</key>
+									<string>WFCoercionVariableAggrandizement</string>
+									<key>CoercionItemClass</key>
+									<string>WFStringContentItem</string>
+								</dict>
+							</array>
+						</dict>
+						<key>WFSerializationType</key>
+						<string>WFTextTokenAttachment</string>
 					</dict>
-					<key>WFSerializationType</key>
-					<string>WFTextTokenAttachment</string>
 				</dict>
 				<key>WFCondition</key>
 				<integer>5</integer>
@@ -439,16 +515,26 @@
 				<dict>
 					<key>Value</key>
 					<dict>
-						<key>Type</key>
-						<string>ActionOutput</string>
-						<key>OutputUUID</key>
-						<string>EAB65559-DE5E-56FA-B915-8A34C65A711F</string>
-						<key>OutputName</key>
-						<string>Invalid operation</string>
+						<key>string</key>
+						<string>￼</string>
+						<key>attachmentsByRange</key>
+						<dict>
+							<key>{0, 1}</key>
+							<dict>
+								<key>Type</key>
+								<string>ActionOutput</string>
+								<key>OutputUUID</key>
+								<string>EAB65559-DE5E-56FA-B915-8A34C65A711F</string>
+								<key>OutputName</key>
+								<string>Invalid operation</string>
+							</dict>
+						</dict>
 					</dict>
 					<key>WFSerializationType</key>
-					<string>WFTextTokenAttachment</string>
+					<string>WFTextTokenString</string>
 				</dict>
+				<key>WFNoOutputSurfaceBehavior</key>
+				<string>Respond</string>
 				<key>UUID</key>
 				<string>5519D38E-09A6-5F92-98BE-B372E4B06D64</string>
 				<key>CustomOutputName</key>
@@ -884,21 +970,6 @@
 									<integer>4</integer>
 								</dict>
 							</dict>
-							<dict>
-								<key>Property</key>
-								<string>Is Visible</string>
-								<key>Operator</key>
-								<integer>4</integer>
-								<key>Removable</key>
-								<true/>
-								<key>Values</key>
-								<dict>
-									<key>Bool</key>
-									<true/>
-									<key>Unit</key>
-									<integer>4</integer>
-								</dict>
-							</dict>
 						</array>
 					</dict>
 					<key>WFSerializationType</key>
@@ -944,17 +1015,31 @@
 			<dict>
 				<key>WFInput</key>
 				<dict>
-					<key>Value</key>
+					<key>Type</key>
+					<string>Variable</string>
+					<key>Variable</key>
 					<dict>
-						<key>Type</key>
-						<string>ActionOutput</string>
-						<key>OutputUUID</key>
-						<string>559077E9-746B-5B29-AF43-8BEE46736020</string>
-						<key>OutputName</key>
-						<string>Window count</string>
+						<key>Value</key>
+						<dict>
+							<key>Type</key>
+							<string>ActionOutput</string>
+							<key>OutputUUID</key>
+							<string>559077E9-746B-5B29-AF43-8BEE46736020</string>
+							<key>OutputName</key>
+							<string>Window count</string>
+							<key>Aggrandizements</key>
+							<array>
+								<dict>
+									<key>Type</key>
+									<string>WFCoercionVariableAggrandizement</string>
+									<key>CoercionItemClass</key>
+									<string>WFStringContentItem</string>
+								</dict>
+							</array>
+						</dict>
+						<key>WFSerializationType</key>
+						<string>WFTextTokenAttachment</string>
 					</dict>
-					<key>WFSerializationType</key>
-					<string>WFTextTokenAttachment</string>
 				</dict>
 				<key>WFCondition</key>
 				<integer>5</integer>
@@ -962,8 +1047,8 @@
 				<integer>0</integer>
 				<key>GroupingIdentifier</key>
 				<string>0904BD90-FD7B-5C55-9E37-A2E408E4DFBE</string>
-				<key>WFNumberValue</key>
-				<integer>1</integer>
+				<key>WFConditionalActionString</key>
+				<string>1</string>
 				<key>UUID</key>
 				<string>6891AC7A-95E6-5FF7-98AE-7138203A4C59</string>
 				<key>CustomOutputName</key>
@@ -1012,16 +1097,26 @@
 				<dict>
 					<key>Value</key>
 					<dict>
-						<key>Type</key>
-						<string>ActionOutput</string>
-						<key>OutputUUID</key>
-						<string>7E9BAE7B-E7F3-58A1-8C7E-70B74CBFB053</string>
-						<key>OutputName</key>
-						<string>Target changed</string>
+						<key>string</key>
+						<string>￼</string>
+						<key>attachmentsByRange</key>
+						<dict>
+							<key>{0, 1}</key>
+							<dict>
+								<key>Type</key>
+								<string>ActionOutput</string>
+								<key>OutputUUID</key>
+								<string>7E9BAE7B-E7F3-58A1-8C7E-70B74CBFB053</string>
+								<key>OutputName</key>
+								<string>Target changed</string>
+							</dict>
+						</dict>
 					</dict>
 					<key>WFSerializationType</key>
-					<string>WFTextTokenAttachment</string>
+					<string>WFTextTokenString</string>
 				</dict>
+				<key>WFNoOutputSurfaceBehavior</key>
+				<string>Respond</string>
 				<key>UUID</key>
 				<string>60227D32-82E5-50D3-8280-9A4E4F90001E</string>
 				<key>CustomOutputName</key>
@@ -1077,17 +1172,31 @@
 			<dict>
 				<key>WFInput</key>
 				<dict>
-					<key>Value</key>
+					<key>Type</key>
+					<string>Variable</string>
+					<key>Variable</key>
 					<dict>
-						<key>Type</key>
-						<string>ActionOutput</string>
-						<key>OutputUUID</key>
-						<string>39053FC0-AFFA-5B8E-A053-E0298EA02061</string>
-						<key>OutputName</key>
-						<string>operation</string>
+						<key>Value</key>
+						<dict>
+							<key>Type</key>
+							<string>ActionOutput</string>
+							<key>OutputUUID</key>
+							<string>39053FC0-AFFA-5B8E-A053-E0298EA02061</string>
+							<key>OutputName</key>
+							<string>operation</string>
+							<key>Aggrandizements</key>
+							<array>
+								<dict>
+									<key>Type</key>
+									<string>WFCoercionVariableAggrandizement</string>
+									<key>CoercionItemClass</key>
+									<string>WFStringContentItem</string>
+								</dict>
+							</array>
+						</dict>
+						<key>WFSerializationType</key>
+						<string>WFTextTokenAttachment</string>
 					</dict>
-					<key>WFSerializationType</key>
-					<string>WFTextTokenAttachment</string>
 				</dict>
 				<key>WFCondition</key>
 				<integer>4</integer>
@@ -1202,16 +1311,26 @@
 				<dict>
 					<key>Value</key>
 					<dict>
-						<key>Type</key>
-						<string>ActionOutput</string>
-						<key>OutputUUID</key>
-						<string>2ED3BACA-381D-5FAC-A7AE-9C7205242528</string>
-						<key>OutputName</key>
-						<string>Resize completed</string>
+						<key>string</key>
+						<string>￼</string>
+						<key>attachmentsByRange</key>
+						<dict>
+							<key>{0, 1}</key>
+							<dict>
+								<key>Type</key>
+								<string>ActionOutput</string>
+								<key>OutputUUID</key>
+								<string>2ED3BACA-381D-5FAC-A7AE-9C7205242528</string>
+								<key>OutputName</key>
+								<string>Resize completed</string>
+							</dict>
+						</dict>
 					</dict>
 					<key>WFSerializationType</key>
-					<string>WFTextTokenAttachment</string>
+					<string>WFTextTokenString</string>
 				</dict>
+				<key>WFNoOutputSurfaceBehavior</key>
+				<string>Respond</string>
 				<key>UUID</key>
 				<string>CA325B51-C535-5960-823D-53C022D0C1F3</string>
 				<key>CustomOutputName</key>
@@ -1332,16 +1451,26 @@
 				<dict>
 					<key>Value</key>
 					<dict>
-						<key>Type</key>
-						<string>ActionOutput</string>
-						<key>OutputUUID</key>
-						<string>25651FAE-D568-52B0-B4AC-FE9EDB39AE1C</string>
-						<key>OutputName</key>
-						<string>Move completed</string>
+						<key>string</key>
+						<string>￼</string>
+						<key>attachmentsByRange</key>
+						<dict>
+							<key>{0, 1}</key>
+							<dict>
+								<key>Type</key>
+								<string>ActionOutput</string>
+								<key>OutputUUID</key>
+								<string>25651FAE-D568-52B0-B4AC-FE9EDB39AE1C</string>
+								<key>OutputName</key>
+								<string>Move completed</string>
+							</dict>
+						</dict>
 					</dict>
 					<key>WFSerializationType</key>
-					<string>WFTextTokenAttachment</string>
+					<string>WFTextTokenString</string>
 				</dict>
+				<key>WFNoOutputSurfaceBehavior</key>
+				<string>Respond</string>
 				<key>UUID</key>
 				<string>3E215A94-1EAA-5C4E-9B44-78F26C464913</string>
 				<key>CustomOutputName</key>

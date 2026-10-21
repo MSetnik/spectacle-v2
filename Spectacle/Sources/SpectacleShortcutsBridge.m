@@ -9,6 +9,7 @@ NSString *const SpectacleShortcutsErrorDomain = @"SpectacleShortcutsError";
 - (SBElementArray *)shortcuts;
 @end
 @protocol SpectacleScriptableShortcut
+@property (copy, readonly) NSString *name;
 - (id)runWithInput:(id)input;
 @end
 
@@ -56,9 +57,20 @@ static NSError *bridgeError(SpectacleShortcutsErrorCode code, NSString *descript
           (id)[SBApplication applicationWithBundleIdentifier:@"com.apple.shortcuts.events"];
         events.delegate = self;
         events.timeout = 60 * 30; // Apple Event timeout is measured in ticks, not seconds.
-        SBObject<SpectacleScriptableShortcut> *shortcut =
-          (id)[events.shortcuts objectWithName:SpectacleCompanionShortcutName];
-        if (!events || ![shortcut get]) {
+        // Shortcuts permits duplicate names, and its name specifier may resolve
+        // one arbitrarily or fail with -1728. Never run an ambiguous workflow.
+        SBObject<SpectacleScriptableShortcut> *shortcut = nil;
+        NSUInteger matches = 0;
+        for (SBObject<SpectacleScriptableShortcut> *candidate in events.shortcuts) {
+          if ([candidate.name isEqualToString:SpectacleCompanionShortcutName]) {
+            shortcut = candidate;
+            matches++;
+          }
+        }
+        if (matches > 1) {
+          error = bridgeError(SpectacleShortcutsAmbiguous,
+                              @"Multiple Spectacle Window Bridge shortcuts have the same name. Keep one copy in Shortcuts, then verify the connection again.");
+        } else if (!events || !matches || ![shortcut get]) {
           error = bridgeError(SpectacleShortcutsMissing,
                               @"Install the Spectacle Window Bridge shortcut, keeping its original name.");
         } else {
@@ -75,6 +87,12 @@ static NSError *bridgeError(SpectacleShortcutsErrorCode code, NSString *descript
                                      : @"Shortcuts could not finish the request. Check its permissions and try again. Pending commands were cancelled.");
           response = nil;
         }
+      }
+      if (error) {
+        NSLog(@"Shortcuts bridge %@ failed (%@:%ld)", immutableRequest[@"operation"],
+              error.domain, (long)error.code);
+      } else if ([immutableRequest[@"operation"] isEqual:@"probe"]) {
+        NSLog(@"Shortcuts bridge probe succeeded");
       }
       dispatch_async(dispatch_get_main_queue(), ^{ completion(response, error); });
     }

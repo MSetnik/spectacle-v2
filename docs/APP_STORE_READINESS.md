@@ -1,6 +1,6 @@
 # Mac App Store readiness
 
-Updated on 2026-10-19 for the `feat/shortcuts-store-backend` implementation, based on the native work in `ce281dc`.
+Updated on 2026-10-21 for the `feat/shortcuts-store-backend` implementation, based on the native work in `ce281dc`.
 
 ## Decision
 
@@ -8,7 +8,7 @@ Mac App Store distribution is a user requirement. On 2026-10-19 the user explici
 
 Research found a concrete alternative: a sandboxed app invokes a user-installed Shortcut to move and resize windows. snApp provides inspectable source and a Store listing; 941 Tiles provides a second Store example. Apple documents the required scripting access. See [the evidence and implementation plan](APP_STORE_RESEARCH.md).
 
-The sandboxed Shortcuts backend and companion source are now implemented. The current build is still not ready for submission: Apple's signing command returned network errors, so the companion has not been imported and real window control has not been verified. See the [implementation and exact validation status](SHORTCUTS_BACKEND.md).
+The sandboxed Shortcuts backend and companion are now implemented, and the companion has been signed, imported, and used to move the isolated test window. The current build is still not ready for submission: repeatable window control initiated by the sandboxed app, full release QA, and Store provisioning remain outstanding. See the [implementation and exact validation status](SHORTCUTS_BACKEND.md).
 
 ## Primary blocker: cross-application window control
 
@@ -25,15 +25,15 @@ Apple Developer Technical Support also explains that `com.apple.security.accessi
 
 **Assessment:** the current direct-Accessibility implementation cannot simply be sandboxed and signed. However, this does not rule out the product category: delegating window operations to Shortcuts is a demonstrated alternative in other Store apps. Use the documented `com.apple.security.scripting-targets` access group for Shortcuts, rather than an imaginary Accessibility entitlement or a temporary exception copied from a blog.
 
-This conclusion is based on documentation and source inspection. We have not submitted this app or received a rejection. The separate Store configuration builds and opens with the sandbox enabled; real window movement remains unverified. Other Store listings establish precedent, not approval of this fork or proof that all Spectacle features will behave identically.
+This conclusion is based on documentation and source inspection. We have not submitted this app or received a rejection. The separate Store configuration builds and opens with the sandbox enabled; the signed companion moved a local fixture when invoked directly, and the Store app's connection probe succeeded. A repeatable Store-app-initiated move remains unverified. Other Store listings establish precedent, not approval of this fork or proof that all Spectacle features will behave identically.
 
 ## Current evidence
 
 | Area | Status |
 | --- | --- |
 | Apple silicon | Release binary contains `arm64` and `x86_64`; the local Release process was observed running as ARM64 on macOS 27.0.1. |
-| Automated tests | 120 local XCTest cases passed on ARM64, including 19 Shortcuts backend tests. The previous backend's [ARM and Intel CI jobs](https://github.com/MSetnik/spectacle-v2/actions/runs/39266692699) passed. CI builds and verifies both direct and Store configurations. |
-| Actual window control | Local native Shortcuts actions successfully moved/resized an isolated fixture and exposed a sequencing race. Protocol 2 now waits for observed stable bounds between resize/move calls. Full generated-companion integration remains unverified because signing returned 500/502/504 errors; see [the exact test record](SHORTCUTS_BACKEND.md). |
+| Automated tests | 121 local XCTest cases passed on ARM64, including 20 Shortcuts backend tests. The earlier protocol-2 [ARM and Intel CI jobs](https://github.com/MSetnik/spectacle-v2/actions/runs/39273815866) passed. CI builds and verifies both direct and Store configurations; the latest fixes have not yet run there. |
+| Actual window control | The signed, imported generated companion directly resized/moved an isolated fixture and rejected stale geometry. The sandboxed app's connection probe succeeded during diagnosis; the final bridge now rejects duplicate names, which are present locally. Protocol 2 waits for observed stable bounds between resize/move calls, and window discovery now skips a tiny overlay observed ahead of the fixture's main window. Full repeatable app-initiated action and history remain unverified; see [the exact test record](SHORTCUTS_BACKEND.md). |
 | Signing | Ad-hoc signing only; no developer team or App Store provisioning is configured. |
 | Sandbox | Enabled and verified in the Store signature, using the documented Shortcuts scripting group. The Store binary excludes direct AX movers and has no temporary exception or debug entitlement. |
 | Bundle identity | Direct builds retain `com.divisiblebyzero.Spectacle`; Store builds use provisional `io.github.msetnik.Spectacle` with a separate settings container. Developer-team ownership/availability remains unchecked. |
@@ -44,7 +44,7 @@ This conclusion is based on documentation and source inspection. We have not sub
 
 ## Next step
 
-Obtain the signed companion using the user's approved Apple validation command, import it, and test the implemented backend. Start with left/right half and maximize on the intended frontmost window, then test rapid keyboard commands, multiple windows and displays, denied/revoked permissions, and a missing Shortcut. Measure actual latency.
+Resolve local duplicate-name ambiguity, then demonstrate repeatable Store-app-initiated left/right half and maximize actions on the intended frontmost window. Continue with rapid keyboard commands, multiple windows and displays, denied/revoked permissions, and a missing Shortcut. Measure actual latency.
 
 The [research document](APP_STORE_RESEARCH.md) records proposed entitlements, code boundaries, and verification criteria. No third-party app or Shortcut was installed or executed during that research.
 

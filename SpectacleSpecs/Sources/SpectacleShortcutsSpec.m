@@ -143,6 +143,17 @@ static SpectacleWindowSnapshot *snapshot(CGWindowID windowID, CGRect frame)
                                                                       windowID:0 appName:@"Test" launchDate:NSDate.date];
   XCTAssertEqual(result.windowID, 4u);
 }
+- (void)testWindowDiscoverySkipsTinyLayerZeroOverlayButCanRefreshKnownWindow
+{
+  NSArray *windows = @[windowInfo(11, 42, CGRectMake(186, 186, 66, 20), 0, 1),
+                       windowInfo(12, 42, CGRectMake(180, 180, 574, 432), 0, 1)];
+  SpectacleWindowSnapshot *front = [SpectacleWindowSnapshot snapshotFromWindows:windows processIdentifier:42
+                                                                      windowID:0 appName:@"Test" launchDate:NSDate.date];
+  XCTAssertEqual(front.windowID, 12u);
+  SpectacleWindowSnapshot *known = [SpectacleWindowSnapshot snapshotFromWindows:windows processIdentifier:42
+                                                                      windowID:11 appName:@"Test" launchDate:NSDate.date];
+  XCTAssertEqual(known.windowID, 11u);
+}
 - (void)testSnapshotIdentitySurvivesMovementButNotProcessReuse
 {
   SpectacleWindowSnapshot *moved = snapshot(7, CGRectMake(0, 0, 300, 200));

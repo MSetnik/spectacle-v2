@@ -43,6 +43,10 @@
         || !CGRectMakeWithDictionaryRepresentation((__bridge CFDictionaryRef)bounds, &frame)
         || CGRectIsEmpty(frame) || CGRectIsInfinite(frame)
         || !isfinite(frame.origin.x) || !isfinite(frame.origin.y)) continue;
+    // Some apps put tiny layer-zero overlays ahead of their document window in the
+    // Window Server list. Only apply this guard when choosing a new target; a
+    // previously captured window ID must remain refreshable at any valid size.
+    if (!windowID && (frame.size.width < 100 || frame.size.height < 100)) continue;
     SpectacleWindowSnapshot *result = [self new];
     result->_windowID = candidateID;
     result->_processIdentifier = pid;

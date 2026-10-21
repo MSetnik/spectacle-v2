@@ -8,6 +8,7 @@ typedef NS_ENUM(NSInteger, SpectacleShortcutsErrorCode) {
   SpectacleShortcutsExecutionFailed,
   SpectacleShortcutsInvalidResponse,
   SpectacleShortcutsTargetChanged,
+  SpectacleShortcutsAmbiguous,
 };
 
 typedef void (^SpectacleShortcutsCompletion)(NSDictionary *response, NSError *error);

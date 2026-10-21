@@ -22,6 +22,16 @@ def reference(label):
     return attachment({"Type": "ActionOutput", "OutputUUID": identifier(label), "OutputName": label})
 
 
+def conditional_input(label):
+    # Dictionary values have no fixed type. Explicit text coercion makes the
+    # comparison field available in Shortcuts instead of an empty If action.
+    token = reference(label)
+    token["Value"]["Aggrandizements"] = [
+        {"Type": "WFCoercionVariableAggrandizement", "CoercionItemClass": "WFStringContentItem"}
+    ]
+    return {"Type": "Variable", "Variable": token}
+
+
 def text_with_reference(prefix, label, suffix=""):
     return {"Value": {"string": prefix + "\ufffc" + suffix,
                       "attachmentsByRange": {"{%d, 1}" % len(prefix): reference(label)["Value"]}},
@@ -45,11 +55,13 @@ def generate():
         action("gettext", label,
                WFTextActionText=text_with_reference('{"protocol":2,"requestID":"', "requestID",
                                                    '","status":"' + status + '"}'))
-        action("output", label + " output", WFOutput=reference(label))
+        action("output", label + " output", WFOutput=text_with_reference("", label),
+               WFNoOutputSurfaceBehavior="Respond")
 
-    def start_if(label, value, condition, **rhs):
-        action("conditional", label, WFInput=reference(value), WFCondition=condition,
-               WFControlFlowMode=0, GroupingIdentifier=identifier(label + " group"), **rhs)
+    def start_if(label, value, condition, expected):
+        action("conditional", label, WFInput=conditional_input(value), WFCondition=condition,
+               WFControlFlowMode=0, GroupingIdentifier=identifier(label + " group"),
+               WFConditionalActionString=expected)
 
     def end_if(label):
         action("conditional", label + " end", WFControlFlowMode=2,
@@ -58,17 +70,17 @@ def generate():
     action("comment", "About", WFCommentActionText=
            "Companion for Spectacle. Receives a JSON request from the app. Uses only built-in window "
            "actions. No network, shell scripts, clipboard, or document access. Keep this Shortcut's name. "
-           "A move is allowed only when exactly one visible window matches the captured app and frame.")
+           "A move is allowed only when exactly one window matches the captured app and frame.")
     for key in ("requestID", "protocol", "operation"):
         read(key)
-    start_if("Protocol guard", "protocol", 5, WFNumberValue=2)
+    start_if("Protocol guard", "protocol", 5, "2")
     reply("incompatible", "Incompatible protocol")
     end_if("Protocol guard")
-    start_if("Probe", "operation", 4, WFConditionalActionString="probe")
+    start_if("Probe", "operation", 4, "probe")
     reply("ok", "Connection verified")
     end_if("Probe")
-    start_if("Operation guard", "operation", 5, WFConditionalActionString="move")
-    start_if("Resize operation guard", "operation", 5, WFConditionalActionString="resize")
+    start_if("Operation guard", "operation", 5, "move")
+    start_if("Resize operation guard", "operation", 5, "resize")
     reply("invalid", "Invalid operation")
     end_if("Resize operation guard")
     end_if("Operation guard")
@@ -80,21 +92,19 @@ def generate():
                                   ("Height", "beforeHeight", "Number")):
         predicates.append({"Property": prop, "Operator": 4, "Removable": True,
                            "Values": {value_type: text_with_reference("", key), "Unit": 4}})
-    predicates.append({"Property": "Is Visible", "Operator": 4, "Removable": True,
-                       "Values": {"Bool": True, "Unit": 4}})
     action("filter.windows", "Matching windows", WFContentItemLimitEnabled=False,
            WFContentItemFilter={"Value": {"WFActionParameterFilterPrefix": 1,
                                           "WFContentPredicateBoundedDate": False,
                                           "WFActionParameterFilterTemplates": predicates},
                                 "WFSerializationType": "WFContentPredicateTableTemplate"})
     action("count", "Window count", Input=reference("Matching windows"), WFCountType="Items")
-    start_if("Unique window guard", "Window count", 5, WFNumberValue=1)
+    start_if("Unique window guard", "Window count", 5, "1")
     reply("target-changed", "Target changed")
     end_if("Unique window guard")
     action("getitemfromlist", "Target window", WFInput=reference("Matching windows"), WFItemSpecifier="First Item")
     # Exactly one geometry mutation per invocation; the app waits for settled bounds
     # before the next call, avoiding stale-height calculations inside Shortcuts.
-    start_if("Resize request", "operation", 4, WFConditionalActionString="resize")
+    start_if("Resize request", "operation", 4, "resize")
     action("resizewindow", "Resize", WFWindow=reference("Target window"), WFConfiguration="Dimensions",
            WFWidth=reference("width"), WFHeight=reference("height"), WFBringToFront=False)
     reply("ok", "Resize completed")
