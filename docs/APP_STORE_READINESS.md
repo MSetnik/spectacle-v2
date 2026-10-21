@@ -33,7 +33,7 @@ This conclusion is based on documentation and source inspection. We have not sub
 | --- | --- |
 | Apple silicon | Release binary contains `arm64` and `x86_64`; the local Release process was observed running as ARM64 on macOS 27.0.1. |
 | Automated tests | 121 local XCTest cases passed on ARM64, including 20 Shortcuts backend tests. The earlier protocol-2 [ARM and Intel CI jobs](https://github.com/MSetnik/spectacle-v2/actions/runs/39273815866) passed. CI builds and verifies both direct and Store configurations; the latest fixes have not yet run there. |
-| Actual window control | The signed, imported generated companion directly resized/moved an isolated fixture and rejected stale geometry. The sandboxed app's connection probe succeeded during diagnosis; the final bridge now rejects duplicate names, which are present locally. Protocol 2 waits for observed stable bounds between resize/move calls, and window discovery now skips a tiny overlay observed ahead of the fixture's main window. Full repeatable app-initiated action and history remain unverified; see [the exact test record](SHORTCUTS_BACKEND.md). |
+| Actual window control | The signed, imported generated companion directly resized/moved an isolated fixture and rejected stale geometry. After removing both same-name test copies and reimporting one signed copy, the CLI again produced exact observed fixture frames. The sandboxed app's connection probe succeeded during diagnosis; the final bridge rejects duplicate names, and the local library now has one shipping-name copy. Protocol 2 waits for observed stable bounds between resize/move calls, and window discovery skips a tiny overlay observed ahead of the fixture's main window. Full repeatable app-initiated action and history remain unverified; see [the exact test record](SHORTCUTS_BACKEND.md). |
 | Signing | Ad-hoc signing only; no developer team or App Store provisioning is configured. |
 | Sandbox | Enabled and verified in the Store signature, using the documented Shortcuts scripting group. The Store binary excludes direct AX movers and has no temporary exception or debug entitlement. |
 | Bundle identity | Direct builds retain `com.divisiblebyzero.Spectacle`; Store builds use provisional `io.github.msetnik.Spectacle` with a separate settings container. Developer-team ownership/availability remains unchecked. |
@@ -44,7 +44,7 @@ This conclusion is based on documentation and source inspection. We have not sub
 
 ## Next step
 
-Resolve local duplicate-name ambiguity, then demonstrate repeatable Store-app-initiated left/right half and maximize actions on the intended frontmost window. Continue with rapid keyboard commands, multiple windows and displays, denied/revoked permissions, and a missing Shortcut. Measure actual latency.
+Demonstrate repeatable Store-app-initiated left/right half and maximize actions on the intended frontmost window. Continue with rapid keyboard commands, multiple windows and displays, denied/revoked permissions, and a missing Shortcut. Measure actual latency.
 
 The [research document](APP_STORE_RESEARCH.md) records proposed entitlements, code boundaries, and verification criteria. No third-party app or Shortcut was installed or executed during that research.
 
